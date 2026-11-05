@@ -183,7 +183,7 @@ func _obiettivi(i := -1) -> Array:
 			return ["klausenburg", "budapest", "vienna", "bucarest", "monaco", "parigi"]
 		var z: Array = ZONE[i]
 		return [z[int(s()["giorno"]) / 2 % z.size()]]
-	if i < 0 or cand.size() <= 3:
+	if i < 0 or cand.size() <= 8:
 		return cand
 	# ognuno insegue i candidati più vicini a sé che agli altri
 	var miei := []

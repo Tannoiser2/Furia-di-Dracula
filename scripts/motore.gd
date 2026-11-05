@@ -3020,7 +3020,7 @@ func _d_movimento(_r: Dictionary, o: Dictionary) -> void:
 			s["percorso"].push_front(n)
 			s["flag"]["inc_ok"] = true
 			_furia()
-			_log("Dracula gioca una carta coperta sul Percorso.")
+			_log("Dracula si sposta.")
 		"nutrirsi":
 			s["percorso"].push_front(_nasc("", "nutrirsi"))
 			s["dr"]["danni"] = max(0, int(s["dr"]["danni"]) - 3)
