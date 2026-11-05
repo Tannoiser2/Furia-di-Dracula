@@ -67,14 +67,14 @@ def firebase_json(v):
 
 
 def allowed(uid, path, new, new_host=None):
-    """Regole semplificate di firebase/database.rules.json (radice whogoesthere)."""
-    if len(path) >= 3 and path[0] == "whogoesthere" and path[1] == "salvataggi":
+    """Regole semplificate di firebase/database.rules.json (radice furiadracula)."""
+    if len(path) >= 3 and path[0] == "furiadracula" and path[1] == "salvataggi":
         return path[2] == uid
-    if len(path) < 3 or path[0] != "whogoesthere" or path[1] != "rooms":
+    if len(path) < 3 or path[0] != "furiadracula" or path[1] != "rooms":
         return False
     path = path[1:]
     code = path[1]
-    room = get_node(["whogoesthere", "rooms", code]) or {}
+    room = get_node(["furiadracula", "rooms", code]) or {}
     host = room.get("host") or new_host
     if len(path) >= 3 and path[2] == "host":
         host = room.get("host")
@@ -90,15 +90,15 @@ def allowed(uid, path, new, new_host=None):
     if key == "members" and len(path) == 4:
         return path[3] == uid
     if key == "seats" and len(path) == 5:
-        cur = get_node(["whogoesthere"] + path[:4]) or {}
+        cur = get_node(["furiadracula"] + path[:4]) or {}
         return cur.get("uid") == uid or host == uid
     if key == "seats" and len(path) == 4:
-        cur = get_node(["whogoesthere"] + path)
+        cur = get_node(["furiadracula"] + path)
         if cur is None:
             return (isinstance(new, dict) and new.get("uid") == uid) or host == uid
         return cur.get("uid") == uid or host == uid or (isinstance(new, dict) and new.get("uid") == uid and new.get("name") == cur.get("name"))
     if key == "log" and len(path) == 4:
-        if get_node(["whogoesthere"] + path) is not None:
+        if get_node(["furiadracula"] + path) is not None:
             return False
         return uid in (room.get("members") or {})
     return False
@@ -151,7 +151,7 @@ class H(BaseHTTPRequestHandler):
             return self._send(401, {"error": "Permission denied"})
         with LOCK:
             if method == "GET":
-                if path[:2] == ["whogoesthere", "rooms"] and len(path) < 3:
+                if path[:2] == ["furiadracula", "rooms"] and len(path) < 3:
                     return self._send(401, {"error": "Permission denied"})
                 return self._send(200, firebase_json(get_node(path)))
             if method == "DELETE":

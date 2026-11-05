@@ -142,12 +142,33 @@ func _dist_cand(da: String, cand: Array) -> float:
 	return tot / cand.size() * 0.5 + mn * 0.5
 
 ## Dove conviene andare: i candidati se sono pochi, altrimenti il «baricentro» delle tracce.
-func _obiettivi() -> Array:
+const ZONE := [["parigi", "bruxelles", "marsiglia", "madrid"], ["monaco", "milano", "praga", "roma"], ["budapest", "vienna", "zagabria", "belgrado"], ["bucarest", "sofia", "klausenburg", "varna"]]
+
+func _obiettivi(i := -1) -> Array:
 	var cand := candidati()
 	if cand.is_empty() or cand.size() > 25:
-		# niente informazioni utili: punta verso la Transilvania e il centro dell'Europa
-		return ["klausenburg", "budapest", "vienna", "bucarest", "monaco", "parigi"]
-	return cand
+		# niente informazioni utili: ogni cacciatore pattuglia una zona diversa dell'Europa
+		if i < 0:
+			return ["klausenburg", "budapest", "vienna", "bucarest", "monaco", "parigi"]
+		var z: Array = ZONE[i]
+		return [z[int(s()["giorno"]) / 2 % z.size()]]
+	if i < 0 or cand.size() <= 3:
+		return cand
+	# ognuno insegue i candidati più vicini a sé che agli altri
+	var miei := []
+	for l in cand:
+		var best := -1
+		var bd := 999
+		for j in 4:
+			if not m.attivo(j):
+				continue
+			var d := Dati.dist_viaggio(m.c(j)["pos"], l)
+			if d < bd:
+				bd = d
+				best = j
+		if best == i:
+			miei.append(l)
+	return miei if not miei.is_empty() else cand
 
 # ============================================================ cacciatori
 
@@ -163,7 +184,7 @@ func _azione(r: Dictionary, opz: Array) -> String:
 	if _ha(opz, "osp"):
 		return "osp"
 	var cand := candidati()
-	var obj := _obiettivi()
+	var obj := _obiettivi(i)
 	var margine: int = m.vita(i) - int(h["danni"])
 	var nt: bool = r.get("notte", false)
 	# eventi utili subito
@@ -252,8 +273,8 @@ func _valore_dest(i: int, dest: String, obj: Array) -> float:
 			v += 0.6
 	if s()["nebbia"].has(dest):
 		v += 1.0
-	if Dati.mare(dest):
-		v += 0.4
+	if Dati.mare(dest) and not (dest in candidati()):
+		v += 1.6
 	# i nascondigli con vampiri scoperti vanno ripuliti
 	var rif := m.nasc_di(dest)
 	if not rif.is_empty():
@@ -266,11 +287,11 @@ func _dest_treno(r: Dictionary, opz: Array) -> String:
 	if int(r["g"]) == Motore.DRACULA:
 		var dr := m.pos_dracula()
 		return _migliore(opz, func(o): return float(Dati.dist_viaggio(dr, o["id"])))
-	var obj := _obiettivi()
+	var obj := _obiettivi(int(r["h"]))
 	return _migliore(opz, func(o): return -_valore_dest(int(r["h"]), o["id"], obj))
 
 func _dest_cavalli(r: Dictionary, opz: Array) -> String:
-	var obj := _obiettivi()
+	var obj := _obiettivi(int(r["g"]))
 	return _migliore(opz, func(o): return -_valore_dest(int(r["g"]), o["id"], obj))
 
 func _senso(r: Dictionary, opz: Array) -> String:

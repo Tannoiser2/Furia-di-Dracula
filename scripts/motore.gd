@@ -648,9 +648,9 @@ func _opz_azione(i: int, nt: bool, giro: int) -> Array:
 	if gia != "biglietto" and pos != "castello":
 		out.append(_o("biglietto", "Prenota un biglietto (ne hai %d/2)" % h["big"].size(), {"gruppo": "azioni"}))
 	if gia != "riposo":
-		out.append(_o("riposo", "Riposa: recuperi %d danni" % _cura_riposo(i), {"gruppo": "azioni"}))
+		out.append(_o("riposo", "Riposa: recuperi %s" % ("1 danno" if _cura_riposo(i) == 1 else "%d danni" % _cura_riposo(i)), {"gruppo": "azioni"}))
 	if gia != "ricerca" and not s["nebbia"].has(pos):
-		out.append(_o("ricerca", "Ricerca in %s" % Dati.nome(pos), {"gruppo": "azioni"}))
+		out.append(_o("ricerca", "Ricerca a %s" % Dati.nome(pos), {"gruppo": "azioni"}))
 	if gia != "rifornimento" and pos != "castello" and not s["flag"].get("no_rifornimento", false):
 		var t := "Rifornimento: "
 		if Dati.L(pos)["grande"]:
@@ -1053,6 +1053,9 @@ func _ricerca(i: int) -> void:
 			_log("%s pianta il Paletto di Frassino: «%s» è distrutto." % [nome(i), Dati.INCONTRI[id]["nome"]])
 			_h(x)["inc"][x["e"]]["via"] = true
 	_pulisci_via(rif)
+	rif = nasc_di(pos)
+	if rif.is_empty():
+		return
 	var vampiro := false
 	for x in _lista_inc(rif):
 		if Dati.INCONTRI[_h(x)["inc"][x["e"]]["id"]].get("vampiro", false):

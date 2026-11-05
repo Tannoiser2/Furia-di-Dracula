@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
-"""Controlla che ogni carattere usato nei testi del gioco esista nei font (niente quadratini).
-
-Uso: python3 tools/controlla_glifi.py
-Legge le stringhe di scripts/*.gd e assets/dati/carte.json e le confronta con i glifi di ogni font
-in assets/font/. Esce con errore se manca qualcosa nel font del testo (Barlow) o nei titoli (Bangers).
-"""
+"""Controlla che ogni carattere usato nei testi del gioco esista in tutti i font (niente quadratini).
+Uso: python3 tools/controlla_glifi.py"""
 import glob, json, os, re, sys
 from fontTools.ttLib import TTFont
 
@@ -14,9 +10,8 @@ for f in glob.glob(R + '/scripts/*.gd'):
     src = open(f, encoding='utf-8').read()
     testi += re.findall(r'"((?:[^"\\]|\\.)*)"', src)
     testi += re.findall(r'"""(.*?)"""', src, re.S)
-c = json.load(open(R + '/assets/dati/carte.json', encoding='utf-8'))
-for t in c['tipi'].values():
-    testi += [t['nome'], t['testo']]
+for l in json.load(open(R + '/assets/dati/mappa.json', encoding='utf-8'))['luoghi'].values():
+    testi.append(l['nome'])
 caratteri = set(''.join(testi)) - set('\n\t\r')
 errori = 0
 for font in sorted(glob.glob(R + '/assets/font/*.ttf')):
