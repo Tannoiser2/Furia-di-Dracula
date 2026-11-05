@@ -122,7 +122,7 @@ func luogo_in(p: Vector2) -> String:
 	for k in Dati.luoghi():
 		var L := Dati.L(k)
 		var d := a_schermo(Vector2(L["x"], L["y"])).distance_to(p)
-		var r: float = max(18.0, (110.0 if L["mare"] else 52.0) * zoom)
+		var r: float = max(24.0, (110.0 if L["mare"] else 60.0) * zoom)
 		if d < r and d < bd:
 			bd = d
 			best = k
