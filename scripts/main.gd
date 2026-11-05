@@ -223,7 +223,7 @@ func mostra_menu() -> void:
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 30)
 	cc.add_child(h)
-	var ritratto := immagine("res://assets/carte/personaggi/dracula.webp", 420, 336)
+	var ritratto := immagine("res://assets/ui/copertina.webp", 420, 420)
 	h.add_child(ritratto)
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 12)
@@ -798,11 +798,17 @@ func _decidi(id: String) -> void:
 	mappa.evidenziati = {}
 	_aggiorna_tutto()
 	if not online:
-		_salva(false)
+		_salva(m.finita())
+
+var ultimo_locale := 0.0
 
 func _salva(subito: bool) -> void:
 	if online or m == null:
 		return
+	var adesso := Time.get_unix_time_from_system()
+	if not subito and adesso - ultimo_locale < 3.0:
+		return
+	ultimo_locale = adesso
 	var testo := JSON.stringify(m.s)
 	var f := FileAccess.open(SALVA_LOCALE, FileAccess.WRITE)
 	if f:

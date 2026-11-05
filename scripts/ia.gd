@@ -120,6 +120,12 @@ func _vicini_dracula(da: String, due: bool) -> Array:
 	var out := []
 	if Dati.mare(da):
 		out.append_array(Dati.L(da)["porti"])
+		if due:
+			for p in Dati.L(da)["porti"]:
+				if not Dati.mare(p):
+					for n in Dati.strade(p):
+						if not (n in out):
+							out.append(n)
 	else:
 		out.append_array(Dati.strade(da))
 		out.append_array(Dati.L(da)["porti"])
@@ -144,7 +150,32 @@ func _dist_cand(da: String, cand: Array) -> float:
 ## Dove conviene andare: i candidati se sono pochi, altrimenti il «baricentro» delle tracce.
 const ZONE := [["parigi", "bruxelles", "marsiglia", "madrid"], ["monaco", "milano", "praga", "roma"], ["budapest", "vienna", "zagabria", "belgrado"], ["bucarest", "sofia", "klausenburg", "varna"]]
 
+## Nascondigli rivelati con incontri: vanno ripuliti prima che i vampiri maturino.
+func _nidi() -> Array:
+	var out := []
+	for h in s()["percorso"] + s()["tane"]:
+		var p := m.pubblico(h)
+		if p["luogo"] != "" and int(p["n_inc"]) > 0 and not Dati.mare(p["luogo"]):
+			out.append(p["luogo"])
+	return out
+
+func _piu_vicino(l: String) -> int:
+	var best := -1
+	var bd := 999
+	for j in 4:
+		if not m.attivo(j):
+			continue
+		var d := Dati.dist_viaggio(m.c(j)["pos"], l)
+		if d < bd:
+			bd = d
+			best = j
+	return best
+
 func _obiettivi(i := -1) -> Array:
+	if i >= 0:
+		for l in _nidi():
+			if _piu_vicino(l) == i and Dati.dist_viaggio(m.c(i)["pos"], l) <= 5:
+				return [l]
 	var cand := candidati()
 	if cand.is_empty() or cand.size() > 25:
 		# niente informazioni utili: ogni cacciatore pattuglia una zona diversa dell'Europa
