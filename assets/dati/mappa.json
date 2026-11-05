@@ -1,0 +1,2384 @@
+{
+ "luoghi": {
+  "alicante": {
+   "nome": "Alicante",
+   "carta": 1,
+   "grande": false,
+   "regione": 2,
+   "mare": false,
+   "x": 853,
+   "y": 2380,
+   "porti": [
+    "mediterraneo"
+   ],
+   "adiac": [
+    "granada",
+    "madrid",
+    "saragozza"
+   ],
+   "fer": [
+    [
+     "madrid",
+     "b"
+    ],
+    [
+     "barcellona",
+     "b"
+    ]
+   ]
+  },
+  "amsterdam": {
+   "nome": "Amsterdam",
+   "carta": 2,
+   "grande": true,
+   "regione": 4,
+   "mare": false,
+   "x": 1298,
+   "y": 761,
+   "porti": [
+    "mare_nord"
+   ],
+   "adiac": [
+    "bruxelles",
+    "colonia"
+   ],
+   "fer": []
+  },
+  "atene": {
+   "nome": "Atene",
+   "carta": 3,
+   "grande": true,
+   "regione": 7,
+   "mare": false,
+   "x": 3107,
+   "y": 2529,
+   "porti": [
+    "ionio"
+   ],
+   "adiac": [
+    "valona"
+   ],
+   "fer": []
+  },
+  "barcellona": {
+   "nome": "Barcellona",
+   "carta": 4,
+   "grande": true,
+   "regione": 2,
+   "mare": false,
+   "x": 1060,
+   "y": 2111,
+   "porti": [
+    "mediterraneo"
+   ],
+   "adiac": [
+    "saragozza",
+    "tolosa"
+   ],
+   "fer": [
+    [
+     "saragozza",
+     "b"
+    ],
+    [
+     "alicante",
+     "b"
+    ]
+   ]
+  },
+  "bari": {
+   "nome": "Bari",
+   "carta": 5,
+   "grande": false,
+   "regione": 5,
+   "mare": false,
+   "x": 2410,
+   "y": 2267,
+   "porti": [
+    "adriatico"
+   ],
+   "adiac": [
+    "napoli",
+    "roma"
+   ],
+   "fer": [
+    [
+     "napoli",
+     "g"
+    ]
+   ]
+  },
+  "belgrado": {
+   "nome": "Belgrado",
+   "carta": 6,
+   "grande": false,
+   "regione": 7,
+   "mare": false,
+   "x": 2669,
+   "y": 1775,
+   "porti": [],
+   "adiac": [
+    "bucarest",
+    "klausenburg",
+    "sarajevo",
+    "sofia",
+    "seghedino"
+   ],
+   "fer": [
+    [
+     "seghedino",
+     "g"
+    ],
+    [
+     "sofia",
+     "g"
+    ]
+   ]
+  },
+  "berlino": {
+   "nome": "Berlino",
+   "carta": 7,
+   "grande": true,
+   "regione": 4,
+   "mare": false,
+   "x": 1948,
+   "y": 710,
+   "porti": [],
+   "adiac": [
+    "amburgo",
+    "lipsia",
+    "praga"
+   ],
+   "fer": [
+    [
+     "colonia",
+     "b"
+    ],
+    [
+     "amburgo",
+     "b"
+    ],
+    [
+     "lipsia",
+     "b"
+    ],
+    [
+     "praga",
+     "g"
+    ]
+   ]
+  },
+  "bordeaux": {
+   "nome": "Bordeaux",
+   "carta": 8,
+   "grande": true,
+   "regione": 3,
+   "mare": false,
+   "x": 818,
+   "y": 1643,
+   "porti": [
+    "atlantico_nord"
+   ],
+   "adiac": [
+    "clermont",
+    "nantes",
+    "saragozza",
+    "tolosa"
+   ],
+   "fer": [
+    [
+     "parigi",
+     "b"
+    ],
+    [
+     "saragozza",
+     "b"
+    ]
+   ]
+  },
+  "bruxelles": {
+   "nome": "Bruxelles",
+   "carta": 9,
+   "grande": true,
+   "regione": 3,
+   "mare": false,
+   "x": 1233,
+   "y": 951,
+   "porti": [],
+   "adiac": [
+    "amsterdam",
+    "colonia",
+    "lehavre",
+    "parigi",
+    "strasburgo"
+   ],
+   "fer": [
+    [
+     "parigi",
+     "b"
+    ],
+    [
+     "colonia",
+     "b"
+    ]
+   ]
+  },
+  "bucarest": {
+   "nome": "Bucarest",
+   "carta": 10,
+   "grande": true,
+   "regione": 7,
+   "mare": false,
+   "x": 3155,
+   "y": 1670,
+   "porti": [],
+   "adiac": [
+    "belgrado",
+    "constanta",
+    "galati",
+    "klausenburg",
+    "sofia"
+   ],
+   "fer": [
+    [
+     "seghedino",
+     "g"
+    ],
+    [
+     "galati",
+     "g"
+    ],
+    [
+     "constanta",
+     "g"
+    ]
+   ]
+  },
+  "budapest": {
+   "nome": "Budapest",
+   "carta": 11,
+   "grande": true,
+   "regione": 6,
+   "mare": false,
+   "x": 2478,
+   "y": 1345,
+   "porti": [],
+   "adiac": [
+    "klausenburg",
+    "seghedino",
+    "vienna",
+    "zagabria"
+   ],
+   "fer": [
+    [
+     "vienna",
+     "g"
+    ],
+    [
+     "seghedino",
+     "g"
+    ]
+   ]
+  },
+  "cadice": {
+   "nome": "Cadice",
+   "carta": 12,
+   "grande": true,
+   "regione": 2,
+   "mare": false,
+   "x": 333,
+   "y": 2431,
+   "porti": [
+    "atlantico_sud"
+   ],
+   "adiac": [
+    "granada",
+    "lisbona",
+    "madrid"
+   ],
+   "fer": []
+  },
+  "cagliari": {
+   "nome": "Cagliari",
+   "carta": 13,
+   "grande": false,
+   "regione": 5,
+   "mare": false,
+   "x": 1726,
+   "y": 2448,
+   "porti": [
+    "mediterraneo",
+    "tirreno"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "castello": {
+   "nome": "Castello Dracula",
+   "carta": 14,
+   "grande": false,
+   "regione": 7,
+   "mare": false,
+   "x": 3089,
+   "y": 1507,
+   "porti": [],
+   "adiac": [
+    "galati",
+    "klausenburg"
+   ],
+   "fer": []
+  },
+  "clermont": {
+   "nome": "Clermont-Ferrand",
+   "carta": 15,
+   "grande": false,
+   "regione": 3,
+   "mare": false,
+   "x": 1144,
+   "y": 1625,
+   "porti": [],
+   "adiac": [
+    "bordeaux",
+    "ginevra",
+    "marsiglia",
+    "nantes",
+    "parigi",
+    "tolosa"
+   ],
+   "fer": []
+  },
+  "colonia": {
+   "nome": "Colonia",
+   "carta": 16,
+   "grande": true,
+   "regione": 4,
+   "mare": false,
+   "x": 1461,
+   "y": 932,
+   "porti": [],
+   "adiac": [
+    "amsterdam",
+    "bruxelles",
+    "francoforte",
+    "amburgo",
+    "lipsia",
+    "strasburgo"
+   ],
+   "fer": [
+    [
+     "bruxelles",
+     "b"
+    ],
+    [
+     "francoforte",
+     "b"
+    ],
+    [
+     "berlino",
+     "b"
+    ]
+   ]
+  },
+  "constanta": {
+   "nome": "Constanta",
+   "carta": 17,
+   "grande": true,
+   "regione": 7,
+   "mare": false,
+   "x": 3382,
+   "y": 1679,
+   "porti": [
+    "nero"
+   ],
+   "adiac": [
+    "bucarest",
+    "galati",
+    "varna"
+   ],
+   "fer": [
+    [
+     "bucarest",
+     "g"
+    ]
+   ]
+  },
+  "dublino": {
+   "nome": "Dublino",
+   "carta": 18,
+   "grande": false,
+   "regione": 1,
+   "mare": false,
+   "x": 483,
+   "y": 572,
+   "porti": [
+    "irlanda"
+   ],
+   "adiac": [
+    "galway"
+   ],
+   "fer": []
+  },
+  "edimburgo": {
+   "nome": "Edimburgo",
+   "carta": 19,
+   "grande": true,
+   "regione": 1,
+   "mare": false,
+   "x": 743,
+   "y": 314,
+   "porti": [
+    "mare_nord"
+   ],
+   "adiac": [
+    "manchester"
+   ],
+   "fer": [
+    [
+     "manchester",
+     "b"
+    ]
+   ]
+  },
+  "firenze": {
+   "nome": "Firenze",
+   "carta": 20,
+   "grande": false,
+   "regione": 5,
+   "mare": false,
+   "x": 1866,
+   "y": 1981,
+   "porti": [],
+   "adiac": [
+    "genova",
+    "roma",
+    "venezia"
+   ],
+   "fer": [
+    [
+     "genova",
+     "g"
+    ],
+    [
+     "roma",
+     "g"
+    ]
+   ]
+  },
+  "francoforte": {
+   "nome": "Francoforte",
+   "carta": 21,
+   "grande": false,
+   "regione": 4,
+   "mare": false,
+   "x": 1586,
+   "y": 1045,
+   "porti": [],
+   "adiac": [
+    "colonia",
+    "lipsia",
+    "norimberga",
+    "strasburgo"
+   ],
+   "fer": [
+    [
+     "colonia",
+     "b"
+    ],
+    [
+     "lipsia",
+     "b"
+    ],
+    [
+     "strasburgo",
+     "b"
+    ]
+   ]
+  },
+  "galati": {
+   "nome": "Galati",
+   "carta": 22,
+   "grande": false,
+   "regione": 7,
+   "mare": false,
+   "x": 3316,
+   "y": 1489,
+   "porti": [],
+   "adiac": [
+    "bucarest",
+    "castello",
+    "constanta",
+    "klausenburg"
+   ],
+   "fer": [
+    [
+     "bucarest",
+     "g"
+    ]
+   ]
+  },
+  "galway": {
+   "nome": "Galway",
+   "carta": 23,
+   "grande": false,
+   "regione": 1,
+   "mare": false,
+   "x": 234,
+   "y": 580,
+   "porti": [
+    "atlantico_nord"
+   ],
+   "adiac": [
+    "dublino"
+   ],
+   "fer": []
+  },
+  "ginevra": {
+   "nome": "Ginevra",
+   "carta": 24,
+   "grande": false,
+   "regione": 5,
+   "mare": false,
+   "x": 1380,
+   "y": 1568,
+   "porti": [],
+   "adiac": [
+    "clermont",
+    "marsiglia",
+    "parigi",
+    "strasburgo",
+    "zurigo"
+   ],
+   "fer": [
+    [
+     "milano",
+     "g"
+    ]
+   ]
+  },
+  "genova": {
+   "nome": "Genova",
+   "carta": 25,
+   "grande": true,
+   "regione": 5,
+   "mare": false,
+   "x": 1615,
+   "y": 1831,
+   "porti": [
+    "tirreno"
+   ],
+   "adiac": [
+    "firenze",
+    "marsiglia",
+    "milano",
+    "venezia"
+   ],
+   "fer": [
+    [
+     "milano",
+     "g"
+    ],
+    [
+     "venezia",
+     "g"
+    ],
+    [
+     "firenze",
+     "g"
+    ]
+   ]
+  },
+  "granada": {
+   "nome": "Granada",
+   "carta": 26,
+   "grande": false,
+   "regione": 2,
+   "mare": false,
+   "x": 609,
+   "y": 2464,
+   "porti": [],
+   "adiac": [
+    "alicante",
+    "cadice",
+    "madrid"
+   ],
+   "fer": []
+  },
+  "amburgo": {
+   "nome": "Amburgo",
+   "carta": 27,
+   "grande": true,
+   "regione": 4,
+   "mare": false,
+   "x": 1667,
+   "y": 605,
+   "porti": [
+    "mare_nord"
+   ],
+   "adiac": [
+    "berlino",
+    "colonia",
+    "lipsia"
+   ],
+   "fer": [
+    [
+     "berlino",
+     "b"
+    ]
+   ]
+  },
+  "klausenburg": {
+   "nome": "Klausenburg",
+   "carta": 28,
+   "grande": false,
+   "regione": 6,
+   "mare": false,
+   "x": 2888,
+   "y": 1419,
+   "porti": [],
+   "adiac": [
+    "belgrado",
+    "bucarest",
+    "budapest",
+    "castello",
+    "galati",
+    "seghedino"
+   ],
+   "fer": []
+  },
+  "lehavre": {
+   "nome": "Le Havre",
+   "carta": 29,
+   "grande": false,
+   "regione": 3,
+   "mare": false,
+   "x": 883,
+   "y": 1096,
+   "porti": [
+    "manica"
+   ],
+   "adiac": [
+    "bruxelles",
+    "nantes",
+    "parigi"
+   ],
+   "fer": [
+    [
+     "parigi",
+     "b"
+    ]
+   ]
+  },
+  "lipsia": {
+   "nome": "Lipsia",
+   "carta": 30,
+   "grande": true,
+   "regione": 4,
+   "mare": false,
+   "x": 1866,
+   "y": 887,
+   "porti": [],
+   "adiac": [
+    "berlino",
+    "colonia",
+    "francoforte",
+    "amburgo",
+    "norimberga"
+   ],
+   "fer": [
+    [
+     "berlino",
+     "b"
+    ],
+    [
+     "francoforte",
+     "b"
+    ],
+    [
+     "norimberga",
+     "b"
+    ]
+   ]
+  },
+  "lisbona": {
+   "nome": "Lisbona",
+   "carta": 31,
+   "grande": true,
+   "regione": 2,
+   "mare": false,
+   "x": 83,
+   "y": 2132,
+   "porti": [
+    "atlantico_sud"
+   ],
+   "adiac": [
+    "cadice",
+    "madrid",
+    "santander"
+   ],
+   "fer": [
+    [
+     "madrid",
+     "b"
+    ]
+   ]
+  },
+  "liverpool": {
+   "nome": "Liverpool",
+   "carta": 32,
+   "grande": true,
+   "regione": 1,
+   "mare": false,
+   "x": 653,
+   "y": 601,
+   "porti": [
+    "irlanda"
+   ],
+   "adiac": [
+    "manchester",
+    "swansea"
+   ],
+   "fer": [
+    [
+     "manchester",
+     "b"
+    ]
+   ]
+  },
+  "londra": {
+   "nome": "Londra",
+   "carta": 33,
+   "grande": true,
+   "regione": 1,
+   "mare": false,
+   "x": 916,
+   "y": 855,
+   "porti": [
+    "manica"
+   ],
+   "adiac": [
+    "manchester",
+    "plymouth",
+    "swansea"
+   ],
+   "fer": [
+    [
+     "manchester",
+     "b"
+    ],
+    [
+     "swansea",
+     "b"
+    ],
+    [
+     "plymouth",
+     "b"
+    ]
+   ]
+  },
+  "madrid": {
+   "nome": "Madrid",
+   "carta": 34,
+   "grande": true,
+   "regione": 2,
+   "mare": false,
+   "x": 573,
+   "y": 2118,
+   "porti": [],
+   "adiac": [
+    "alicante",
+    "cadice",
+    "granada",
+    "lisbona",
+    "santander",
+    "saragozza"
+   ],
+   "fer": [
+    [
+     "santander",
+     "b"
+    ],
+    [
+     "lisbona",
+     "b"
+    ],
+    [
+     "saragozza",
+     "b"
+    ],
+    [
+     "alicante",
+     "b"
+    ]
+   ]
+  },
+  "manchester": {
+   "nome": "Manchester",
+   "carta": 35,
+   "grande": true,
+   "regione": 1,
+   "mare": false,
+   "x": 820,
+   "y": 566,
+   "porti": [],
+   "adiac": [
+    "edimburgo",
+    "liverpool",
+    "londra"
+   ],
+   "fer": [
+    [
+     "edimburgo",
+     "b"
+    ],
+    [
+     "liverpool",
+     "b"
+    ],
+    [
+     "londra",
+     "b"
+    ]
+   ]
+  },
+  "marsiglia": {
+   "nome": "Marsiglia",
+   "carta": 36,
+   "grande": true,
+   "regione": 3,
+   "mare": false,
+   "x": 1286,
+   "y": 1909,
+   "porti": [
+    "mediterraneo"
+   ],
+   "adiac": [
+    "clermont",
+    "ginevra",
+    "genova",
+    "milano",
+    "tolosa",
+    "zurigo"
+   ],
+   "fer": [
+    [
+     "parigi",
+     "b"
+    ],
+    [
+     "milano",
+     "g"
+    ]
+   ]
+  },
+  "milano": {
+   "nome": "Milano",
+   "carta": 37,
+   "grande": true,
+   "regione": 5,
+   "mare": false,
+   "x": 1626,
+   "y": 1645,
+   "porti": [],
+   "adiac": [
+    "genova",
+    "marsiglia",
+    "monaco",
+    "venezia",
+    "zurigo"
+   ],
+   "fer": [
+    [
+     "ginevra",
+     "g"
+    ],
+    [
+     "zurigo",
+     "g"
+    ],
+    [
+     "genova",
+     "g"
+    ],
+    [
+     "marsiglia",
+     "g"
+    ]
+   ]
+  },
+  "monaco": {
+   "nome": "Monaco",
+   "carta": 38,
+   "grande": true,
+   "regione": 4,
+   "mare": false,
+   "x": 1857,
+   "y": 1337,
+   "porti": [],
+   "adiac": [
+    "milano",
+    "norimberga",
+    "strasburgo",
+    "venezia",
+    "vienna",
+    "zagabria",
+    "zurigo"
+   ],
+   "fer": [
+    [
+     "norimberga",
+     "b"
+    ],
+    [
+     "strasburgo",
+     "b"
+    ]
+   ]
+  },
+  "nantes": {
+   "nome": "Nantes",
+   "carta": 39,
+   "grande": true,
+   "regione": 3,
+   "mare": false,
+   "x": 709,
+   "y": 1327,
+   "porti": [
+    "atlantico_nord"
+   ],
+   "adiac": [
+    "bordeaux",
+    "clermont",
+    "lehavre",
+    "parigi"
+   ],
+   "fer": []
+  },
+  "napoli": {
+   "nome": "Napoli",
+   "carta": 40,
+   "grande": true,
+   "regione": 5,
+   "mare": false,
+   "x": 2132,
+   "y": 2281,
+   "porti": [
+    "tirreno"
+   ],
+   "adiac": [
+    "bari",
+    "roma"
+   ],
+   "fer": [
+    [
+     "roma",
+     "g"
+    ],
+    [
+     "bari",
+     "g"
+    ]
+   ]
+  },
+  "norimberga": {
+   "nome": "Norimberga",
+   "carta": 41,
+   "grande": false,
+   "regione": 4,
+   "mare": false,
+   "x": 1768,
+   "y": 1154,
+   "porti": [],
+   "adiac": [
+    "francoforte",
+    "lipsia",
+    "monaco",
+    "praga",
+    "strasburgo"
+   ],
+   "fer": [
+    [
+     "lipsia",
+     "b"
+    ],
+    [
+     "monaco",
+     "b"
+    ]
+   ]
+  },
+  "parigi": {
+   "nome": "Parigi",
+   "carta": 42,
+   "grande": true,
+   "regione": 3,
+   "mare": false,
+   "x": 1067,
+   "y": 1202,
+   "porti": [],
+   "adiac": [
+    "bruxelles",
+    "clermont",
+    "ginevra",
+    "lehavre",
+    "nantes",
+    "strasburgo"
+   ],
+   "fer": [
+    [
+     "lehavre",
+     "b"
+    ],
+    [
+     "bruxelles",
+     "b"
+    ],
+    [
+     "bordeaux",
+     "b"
+    ],
+    [
+     "marsiglia",
+     "b"
+    ]
+   ]
+  },
+  "plymouth": {
+   "nome": "Plymouth",
+   "carta": 43,
+   "grande": false,
+   "regione": 1,
+   "mare": false,
+   "x": 570,
+   "y": 953,
+   "porti": [
+    "manica"
+   ],
+   "adiac": [
+    "londra"
+   ],
+   "fer": [
+    [
+     "londra",
+     "b"
+    ]
+   ]
+  },
+  "praga": {
+   "nome": "Praga",
+   "carta": 44,
+   "grande": true,
+   "regione": 6,
+   "mare": false,
+   "x": 2124,
+   "y": 1088,
+   "porti": [],
+   "adiac": [
+    "berlino",
+    "norimberga",
+    "vienna"
+   ],
+   "fer": [
+    [
+     "berlino",
+     "g"
+    ],
+    [
+     "vienna",
+     "g"
+    ]
+   ]
+  },
+  "roma": {
+   "nome": "Roma",
+   "carta": 45,
+   "grande": true,
+   "regione": 5,
+   "mare": false,
+   "x": 1967,
+   "y": 2182,
+   "porti": [
+    "tirreno"
+   ],
+   "adiac": [
+    "bari",
+    "firenze",
+    "napoli"
+   ],
+   "fer": [
+    [
+     "firenze",
+     "g"
+    ],
+    [
+     "napoli",
+     "g"
+    ]
+   ]
+  },
+  "salonicco": {
+   "nome": "Salonicco",
+   "carta": 46,
+   "grande": false,
+   "regione": 7,
+   "mare": false,
+   "x": 2962,
+   "y": 2281,
+   "porti": [
+    "ionio"
+   ],
+   "adiac": [
+    "sofia",
+    "valona"
+   ],
+   "fer": [
+    [
+     "sofia",
+     "g"
+    ]
+   ]
+  },
+  "santander": {
+   "nome": "Santander",
+   "carta": 47,
+   "grande": false,
+   "regione": 2,
+   "mare": false,
+   "x": 554,
+   "y": 1741,
+   "porti": [
+    "atlantico_sud"
+   ],
+   "adiac": [
+    "lisbona",
+    "madrid",
+    "saragozza"
+   ],
+   "fer": [
+    [
+     "madrid",
+     "b"
+    ]
+   ]
+  },
+  "saragozza": {
+   "nome": "Saragozza",
+   "carta": 48,
+   "grande": false,
+   "regione": 2,
+   "mare": false,
+   "x": 822,
+   "y": 2025,
+   "porti": [],
+   "adiac": [
+    "alicante",
+    "barcellona",
+    "bordeaux",
+    "madrid",
+    "santander",
+    "tolosa"
+   ],
+   "fer": [
+    [
+     "bordeaux",
+     "b"
+    ],
+    [
+     "madrid",
+     "b"
+    ],
+    [
+     "barcellona",
+     "b"
+    ]
+   ]
+  },
+  "sarajevo": {
+   "nome": "Sarajevo",
+   "carta": 49,
+   "grande": false,
+   "regione": 6,
+   "mare": false,
+   "x": 2483,
+   "y": 1887,
+   "porti": [],
+   "adiac": [
+    "belgrado",
+    "sofia",
+    "valona",
+    "zagabria"
+   ],
+   "fer": []
+  },
+  "sofia": {
+   "nome": "Sofia",
+   "carta": 50,
+   "grande": false,
+   "regione": 7,
+   "mare": false,
+   "x": 2959,
+   "y": 1972,
+   "porti": [],
+   "adiac": [
+    "belgrado",
+    "bucarest",
+    "salonicco",
+    "sarajevo",
+    "valona",
+    "varna"
+   ],
+   "fer": [
+    [
+     "belgrado",
+     "g"
+    ],
+    [
+     "varna",
+     "g"
+    ],
+    [
+     "salonicco",
+     "g"
+    ]
+   ]
+  },
+  "strasburgo": {
+   "nome": "Strasburgo",
+   "carta": 51,
+   "grande": false,
+   "regione": 4,
+   "mare": false,
+   "x": 1457,
+   "y": 1291,
+   "porti": [],
+   "adiac": [
+    "bruxelles",
+    "colonia",
+    "francoforte",
+    "ginevra",
+    "monaco",
+    "norimberga",
+    "parigi",
+    "zurigo"
+   ],
+   "fer": [
+    [
+     "francoforte",
+     "b"
+    ],
+    [
+     "monaco",
+     "b"
+    ],
+    [
+     "zurigo",
+     "b"
+    ]
+   ]
+  },
+  "swansea": {
+   "nome": "Swansea",
+   "carta": 52,
+   "grande": false,
+   "regione": 1,
+   "mare": false,
+   "x": 604,
+   "y": 822,
+   "porti": [
+    "irlanda"
+   ],
+   "adiac": [
+    "liverpool",
+    "londra"
+   ],
+   "fer": [
+    [
+     "londra",
+     "b"
+    ]
+   ]
+  },
+  "seghedino": {
+   "nome": "Seghedino",
+   "carta": 53,
+   "grande": false,
+   "regione": 6,
+   "mare": false,
+   "x": 2586,
+   "y": 1532,
+   "porti": [],
+   "adiac": [
+    "belgrado",
+    "budapest",
+    "klausenburg",
+    "zagabria"
+   ],
+   "fer": [
+    [
+     "budapest",
+     "g"
+    ],
+    [
+     "belgrado",
+     "g"
+    ],
+    [
+     "bucarest",
+     "g"
+    ]
+   ]
+  },
+  "tolosa": {
+   "nome": "Tolosa",
+   "carta": 54,
+   "grande": false,
+   "regione": 3,
+   "mare": false,
+   "x": 974,
+   "y": 1815,
+   "porti": [],
+   "adiac": [
+    "barcellona",
+    "bordeaux",
+    "clermont",
+    "marsiglia",
+    "saragozza"
+   ],
+   "fer": []
+  },
+  "valona": {
+   "nome": "Valona",
+   "carta": 55,
+   "grande": false,
+   "regione": 7,
+   "mare": false,
+   "x": 2658,
+   "y": 2344,
+   "porti": [
+    "adriatico"
+   ],
+   "adiac": [
+    "atene",
+    "salonicco",
+    "sarajevo",
+    "sofia"
+   ],
+   "fer": []
+  },
+  "varna": {
+   "nome": "Varna",
+   "carta": 56,
+   "grande": true,
+   "regione": 7,
+   "mare": false,
+   "x": 3351,
+   "y": 1799,
+   "porti": [
+    "nero"
+   ],
+   "adiac": [
+    "constanta",
+    "sofia"
+   ],
+   "fer": [
+    [
+     "sofia",
+     "g"
+    ]
+   ]
+  },
+  "venezia": {
+   "nome": "Venezia",
+   "carta": 57,
+   "grande": false,
+   "regione": 5,
+   "mare": false,
+   "x": 1940,
+   "y": 1712,
+   "porti": [
+    "adriatico"
+   ],
+   "adiac": [
+    "firenze",
+    "genova",
+    "milano",
+    "monaco"
+   ],
+   "fer": [
+    [
+     "vienna",
+     "g"
+    ],
+    [
+     "genova",
+     "g"
+    ]
+   ]
+  },
+  "vienna": {
+   "nome": "Vienna",
+   "carta": 58,
+   "grande": true,
+   "regione": 6,
+   "mare": false,
+   "x": 2232,
+   "y": 1306,
+   "porti": [],
+   "adiac": [
+    "budapest",
+    "monaco",
+    "praga",
+    "zagabria"
+   ],
+   "fer": [
+    [
+     "praga",
+     "g"
+    ],
+    [
+     "budapest",
+     "g"
+    ],
+    [
+     "venezia",
+     "g"
+    ]
+   ]
+  },
+  "zagabria": {
+   "nome": "Zagabria",
+   "carta": 59,
+   "grande": false,
+   "regione": 6,
+   "mare": false,
+   "x": 2232,
+   "y": 1645,
+   "porti": [],
+   "adiac": [
+    "budapest",
+    "monaco",
+    "sarajevo",
+    "seghedino",
+    "vienna"
+   ],
+   "fer": []
+  },
+  "zurigo": {
+   "nome": "Zurigo",
+   "carta": 60,
+   "grande": false,
+   "regione": 5,
+   "mare": false,
+   "x": 1546,
+   "y": 1443,
+   "porti": [],
+   "adiac": [
+    "ginevra",
+    "marsiglia",
+    "milano",
+    "monaco",
+    "strasburgo"
+   ],
+   "fer": [
+    [
+     "strasburgo",
+     "b"
+    ],
+    [
+     "milano",
+     "g"
+    ]
+   ]
+  },
+  "adriatico": {
+   "nome": "Mare Adriatico",
+   "carta": 1,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 2299,
+   "y": 2105,
+   "porti": [
+    "venezia",
+    "bari",
+    "valona",
+    "ionio"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "nero": {
+   "nome": "Mar Nero",
+   "carta": 2,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 3527,
+   "y": 1866,
+   "porti": [
+    "constanta",
+    "varna",
+    "ionio"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "manica": {
+   "nome": "La Manica",
+   "carta": 3,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 751,
+   "y": 1024,
+   "porti": [
+    "londra",
+    "plymouth",
+    "lehavre",
+    "atlantico_nord",
+    "mare_nord"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "ionio": {
+   "nome": "Mar Ionio",
+   "carta": 4,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 2617,
+   "y": 2639,
+   "porti": [
+    "salonicco",
+    "atene",
+    "tirreno",
+    "adriatico",
+    "nero"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "irlanda": {
+   "nome": "Mar d'Irlanda",
+   "carta": 5,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 342,
+   "y": 865,
+   "porti": [
+    "dublino",
+    "liverpool",
+    "swansea",
+    "atlantico_nord"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "mediterraneo": {
+   "nome": "Mar Mediterraneo",
+   "carta": 6,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 1275,
+   "y": 2503,
+   "porti": [
+    "alicante",
+    "barcellona",
+    "marsiglia",
+    "cagliari",
+    "atlantico_sud",
+    "tirreno"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "atlantico_nord": {
+   "nome": "Atlantico del Nord",
+   "carta": 7,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 251,
+   "y": 1138,
+   "porti": [
+    "galway",
+    "nantes",
+    "bordeaux",
+    "irlanda",
+    "manica",
+    "mare_nord",
+    "atlantico_sud"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "mare_nord": {
+   "nome": "Mare del Nord",
+   "carta": 8,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 1161,
+   "y": 398,
+   "porti": [
+    "edimburgo",
+    "amsterdam",
+    "amburgo",
+    "atlantico_nord",
+    "manica"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "atlantico_sud": {
+   "nome": "Atlantico del Sud",
+   "carta": 9,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 251,
+   "y": 1479,
+   "porti": [
+    "santander",
+    "lisbona",
+    "cadice",
+    "atlantico_nord",
+    "mediterraneo"
+   ],
+   "adiac": [],
+   "fer": []
+  },
+  "tirreno": {
+   "nome": "Mar Tirreno",
+   "carta": 10,
+   "grande": false,
+   "regione": 0,
+   "mare": true,
+   "x": 2025,
+   "y": 2469,
+   "porti": [
+    "cagliari",
+    "genova",
+    "roma",
+    "napoli",
+    "mediterraneo",
+    "ionio"
+   ],
+   "adiac": [],
+   "fer": []
+  }
+ },
+ "strade": [
+  [
+   "alicante",
+   "granada"
+  ],
+  [
+   "alicante",
+   "madrid"
+  ],
+  [
+   "alicante",
+   "saragozza"
+  ],
+  [
+   "amsterdam",
+   "bruxelles"
+  ],
+  [
+   "amsterdam",
+   "colonia"
+  ],
+  [
+   "atene",
+   "valona"
+  ],
+  [
+   "barcellona",
+   "saragozza"
+  ],
+  [
+   "barcellona",
+   "tolosa"
+  ],
+  [
+   "bari",
+   "napoli"
+  ],
+  [
+   "bari",
+   "roma"
+  ],
+  [
+   "belgrado",
+   "bucarest"
+  ],
+  [
+   "belgrado",
+   "klausenburg"
+  ],
+  [
+   "belgrado",
+   "sarajevo"
+  ],
+  [
+   "belgrado",
+   "sofia"
+  ],
+  [
+   "belgrado",
+   "seghedino"
+  ],
+  [
+   "berlino",
+   "amburgo"
+  ],
+  [
+   "berlino",
+   "lipsia"
+  ],
+  [
+   "berlino",
+   "praga"
+  ],
+  [
+   "bordeaux",
+   "clermont"
+  ],
+  [
+   "bordeaux",
+   "nantes"
+  ],
+  [
+   "bordeaux",
+   "saragozza"
+  ],
+  [
+   "bordeaux",
+   "tolosa"
+  ],
+  [
+   "bruxelles",
+   "colonia"
+  ],
+  [
+   "bruxelles",
+   "lehavre"
+  ],
+  [
+   "bruxelles",
+   "parigi"
+  ],
+  [
+   "bruxelles",
+   "strasburgo"
+  ],
+  [
+   "bucarest",
+   "constanta"
+  ],
+  [
+   "bucarest",
+   "galati"
+  ],
+  [
+   "bucarest",
+   "klausenburg"
+  ],
+  [
+   "bucarest",
+   "sofia"
+  ],
+  [
+   "budapest",
+   "klausenburg"
+  ],
+  [
+   "budapest",
+   "seghedino"
+  ],
+  [
+   "budapest",
+   "vienna"
+  ],
+  [
+   "budapest",
+   "zagabria"
+  ],
+  [
+   "cadice",
+   "granada"
+  ],
+  [
+   "cadice",
+   "lisbona"
+  ],
+  [
+   "cadice",
+   "madrid"
+  ],
+  [
+   "castello",
+   "galati"
+  ],
+  [
+   "castello",
+   "klausenburg"
+  ],
+  [
+   "clermont",
+   "ginevra"
+  ],
+  [
+   "clermont",
+   "marsiglia"
+  ],
+  [
+   "clermont",
+   "nantes"
+  ],
+  [
+   "clermont",
+   "parigi"
+  ],
+  [
+   "clermont",
+   "tolosa"
+  ],
+  [
+   "colonia",
+   "francoforte"
+  ],
+  [
+   "colonia",
+   "amburgo"
+  ],
+  [
+   "colonia",
+   "lipsia"
+  ],
+  [
+   "colonia",
+   "strasburgo"
+  ],
+  [
+   "constanta",
+   "galati"
+  ],
+  [
+   "constanta",
+   "varna"
+  ],
+  [
+   "dublino",
+   "galway"
+  ],
+  [
+   "edimburgo",
+   "manchester"
+  ],
+  [
+   "firenze",
+   "genova"
+  ],
+  [
+   "firenze",
+   "roma"
+  ],
+  [
+   "firenze",
+   "venezia"
+  ],
+  [
+   "francoforte",
+   "lipsia"
+  ],
+  [
+   "francoforte",
+   "norimberga"
+  ],
+  [
+   "francoforte",
+   "strasburgo"
+  ],
+  [
+   "galati",
+   "klausenburg"
+  ],
+  [
+   "ginevra",
+   "marsiglia"
+  ],
+  [
+   "ginevra",
+   "parigi"
+  ],
+  [
+   "ginevra",
+   "strasburgo"
+  ],
+  [
+   "ginevra",
+   "zurigo"
+  ],
+  [
+   "genova",
+   "marsiglia"
+  ],
+  [
+   "genova",
+   "milano"
+  ],
+  [
+   "genova",
+   "venezia"
+  ],
+  [
+   "granada",
+   "madrid"
+  ],
+  [
+   "amburgo",
+   "lipsia"
+  ],
+  [
+   "klausenburg",
+   "seghedino"
+  ],
+  [
+   "lipsia",
+   "norimberga"
+  ],
+  [
+   "lehavre",
+   "nantes"
+  ],
+  [
+   "lehavre",
+   "parigi"
+  ],
+  [
+   "lisbona",
+   "madrid"
+  ],
+  [
+   "lisbona",
+   "santander"
+  ],
+  [
+   "liverpool",
+   "manchester"
+  ],
+  [
+   "liverpool",
+   "swansea"
+  ],
+  [
+   "londra",
+   "manchester"
+  ],
+  [
+   "londra",
+   "plymouth"
+  ],
+  [
+   "londra",
+   "swansea"
+  ],
+  [
+   "madrid",
+   "santander"
+  ],
+  [
+   "madrid",
+   "saragozza"
+  ],
+  [
+   "marsiglia",
+   "milano"
+  ],
+  [
+   "marsiglia",
+   "tolosa"
+  ],
+  [
+   "marsiglia",
+   "zurigo"
+  ],
+  [
+   "milano",
+   "monaco"
+  ],
+  [
+   "milano",
+   "venezia"
+  ],
+  [
+   "milano",
+   "zurigo"
+  ],
+  [
+   "monaco",
+   "norimberga"
+  ],
+  [
+   "monaco",
+   "strasburgo"
+  ],
+  [
+   "monaco",
+   "venezia"
+  ],
+  [
+   "monaco",
+   "vienna"
+  ],
+  [
+   "monaco",
+   "zagabria"
+  ],
+  [
+   "monaco",
+   "zurigo"
+  ],
+  [
+   "nantes",
+   "parigi"
+  ],
+  [
+   "napoli",
+   "roma"
+  ],
+  [
+   "norimberga",
+   "praga"
+  ],
+  [
+   "norimberga",
+   "strasburgo"
+  ],
+  [
+   "parigi",
+   "strasburgo"
+  ],
+  [
+   "praga",
+   "vienna"
+  ],
+  [
+   "salonicco",
+   "sofia"
+  ],
+  [
+   "salonicco",
+   "valona"
+  ],
+  [
+   "santander",
+   "saragozza"
+  ],
+  [
+   "saragozza",
+   "tolosa"
+  ],
+  [
+   "sarajevo",
+   "sofia"
+  ],
+  [
+   "sarajevo",
+   "valona"
+  ],
+  [
+   "sarajevo",
+   "zagabria"
+  ],
+  [
+   "sofia",
+   "valona"
+  ],
+  [
+   "sofia",
+   "varna"
+  ],
+  [
+   "strasburgo",
+   "zurigo"
+  ],
+  [
+   "seghedino",
+   "zagabria"
+  ],
+  [
+   "vienna",
+   "zagabria"
+  ]
+ ],
+ "ferrovie": [
+  [
+   "edimburgo",
+   "manchester",
+   "b"
+  ],
+  [
+   "liverpool",
+   "manchester",
+   "b"
+  ],
+  [
+   "manchester",
+   "londra",
+   "b"
+  ],
+  [
+   "swansea",
+   "londra",
+   "b"
+  ],
+  [
+   "plymouth",
+   "londra",
+   "b"
+  ],
+  [
+   "lehavre",
+   "parigi",
+   "b"
+  ],
+  [
+   "bruxelles",
+   "parigi",
+   "b"
+  ],
+  [
+   "parigi",
+   "bordeaux",
+   "b"
+  ],
+  [
+   "parigi",
+   "marsiglia",
+   "b"
+  ],
+  [
+   "bordeaux",
+   "saragozza",
+   "b"
+  ],
+  [
+   "bruxelles",
+   "colonia",
+   "b"
+  ],
+  [
+   "colonia",
+   "francoforte",
+   "b"
+  ],
+  [
+   "colonia",
+   "berlino",
+   "b"
+  ],
+  [
+   "amburgo",
+   "berlino",
+   "b"
+  ],
+  [
+   "lipsia",
+   "berlino",
+   "b"
+  ],
+  [
+   "francoforte",
+   "lipsia",
+   "b"
+  ],
+  [
+   "lipsia",
+   "norimberga",
+   "b"
+  ],
+  [
+   "norimberga",
+   "monaco",
+   "b"
+  ],
+  [
+   "francoforte",
+   "strasburgo",
+   "b"
+  ],
+  [
+   "strasburgo",
+   "monaco",
+   "b"
+  ],
+  [
+   "strasburgo",
+   "zurigo",
+   "b"
+  ],
+  [
+   "santander",
+   "madrid",
+   "b"
+  ],
+  [
+   "lisbona",
+   "madrid",
+   "b"
+  ],
+  [
+   "madrid",
+   "saragozza",
+   "b"
+  ],
+  [
+   "madrid",
+   "alicante",
+   "b"
+  ],
+  [
+   "saragozza",
+   "barcellona",
+   "b"
+  ],
+  [
+   "barcellona",
+   "alicante",
+   "b"
+  ],
+  [
+   "berlino",
+   "praga",
+   "g"
+  ],
+  [
+   "praga",
+   "vienna",
+   "g"
+  ],
+  [
+   "vienna",
+   "budapest",
+   "g"
+  ],
+  [
+   "vienna",
+   "venezia",
+   "g"
+  ],
+  [
+   "budapest",
+   "seghedino",
+   "g"
+  ],
+  [
+   "seghedino",
+   "belgrado",
+   "g"
+  ],
+  [
+   "seghedino",
+   "bucarest",
+   "g"
+  ],
+  [
+   "belgrado",
+   "sofia",
+   "g"
+  ],
+  [
+   "bucarest",
+   "galati",
+   "g"
+  ],
+  [
+   "bucarest",
+   "constanta",
+   "g"
+  ],
+  [
+   "sofia",
+   "varna",
+   "g"
+  ],
+  [
+   "sofia",
+   "salonicco",
+   "g"
+  ],
+  [
+   "ginevra",
+   "milano",
+   "g"
+  ],
+  [
+   "zurigo",
+   "milano",
+   "g"
+  ],
+  [
+   "milano",
+   "genova",
+   "g"
+  ],
+  [
+   "marsiglia",
+   "milano",
+   "g"
+  ],
+  [
+   "genova",
+   "venezia",
+   "g"
+  ],
+  [
+   "genova",
+   "firenze",
+   "g"
+  ],
+  [
+   "firenze",
+   "roma",
+   "g"
+  ],
+  [
+   "roma",
+   "napoli",
+   "g"
+  ],
+  [
+   "napoli",
+   "bari",
+   "g"
+  ]
+ ],
+ "regioni": {
+  "1": "Britannia",
+  "2": "Iberia",
+  "3": "Gallia",
+  "4": "Germania",
+  "5": "Italia",
+  "6": "Austria-Ungheria",
+  "7": "Balcani"
+ },
+ "ospedali": {
+  "madrid": {
+   "x": 569,
+   "y": 2014
+  },
+  "roma": {
+   "x": 1968,
+   "y": 2075
+  },
+  "budapest": {
+   "x": 2476,
+   "y": 1247
+  }
+ }
+}
