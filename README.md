@@ -24,14 +24,16 @@ Si gioca qui: https://tannoiser2.github.io/Furia-di-Dracula/
 - **Online** con gli amici: stanze con codice di 4 lettere su Firebase; chi crea la stanza fa Dracula o i cacciatori,
   i ruoli liberi li guida l'IA. **Salvataggio** delle partite contro l'IA sul dispositivo e su Firebase.
 
-### Semplificazioni
+### Scelte dei giocatori
 
-- Alcune scelte sempre convenienti sono automatiche: Grande Forza e la Vendetta di Lucy si giocano da sole quando
-  evitano una sconfitta; Cani e Paletto di Frassino si usano da soli prima di una ricerca; la Ghirlanda d'Aglio si indossa
-  a ogni combattimento; i Proiettili Consacrati accompagnano la prima Pistola o il primo Fucile; la Macchinazione scoperta
-  annulla da sola la carta del cacciatore quando serve.
-- Alla fine del tramonto Dracula toglie il segnalino Nebbia, Strada Bloccata e Tempesta più vecchio.
-- I cacciatori indeboliti non devono tenere scoperte una carta Oggetto e una Evento (la squadra vede comunque tutte le carte).
+Tutte le scelte previste dalle regole le fa chi gioca (o l'IA al suo posto): quali Oggetti gettare alla Banda di Szgany,
+chi fa uscire il Cerchio Sacro, l'ordine degli incontri trovati con una ricerca, Cani e Paletto di Frassino prima della
+ricerca, i Cani contro un'imboscata, la Ghirlanda d'Aglio a inizio combattimento, i Proiettili Consacrati, Grande Forza e
+la Vendetta di Lucy, la Macchinazione scoperta e Furioso per Dracula, quali effetti maturati risolvere, quale Strada
+Bloccata e quale Tempesta togliere al tramonto, l'ospedale in caso di parità, se tenere un biglietto appena pescato.
+I cacciatori indeboliti tengono scoperte una carta Oggetto e una Evento, visibili anche a Dracula.
+Al tramonto si toglie un segnalino Nebbia da ogni città e la Schiera Celeste; i segnalini hanno i limiti della scatola
+(4 Nebbia, 6 Tempesta, 8 Strada Bloccata, 4 Dicerie). I 16 biglietti hanno la distribuzione del sacchetto del modulo TTS.
 
 ## Struttura
 

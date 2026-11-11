@@ -467,6 +467,8 @@ func _comb_pre(r: Dictionary, opz: Array) -> String:
 		return "scoperta"
 	if _ha(opz, "imboscata"):
 		return "imboscata"
+	if _ha(opz, "ghirlanda"):
+		return "ghirlanda"
 	var vita_avv := 0
 	if cb["tipo"] == "dracula":
 		vita_avv = Dati.VITA_DRACULA - int(s()["dr"]["danni"])
@@ -892,3 +894,76 @@ func _limite_ev_d(_r: Dictionary, opz: Array) -> String:
 
 func _ritorno_d(_r: Dictionary, opz: Array) -> String:
 	return str(opz[0]["id"])
+
+# ============================================================ scelte aggiunte (regole complete)
+
+func _tieni_big(_r: Dictionary, _opz: Array) -> String:
+	return "tieni"
+
+func _szgany(r: Dictionary, opz: Array) -> String:
+	var j: int = r["h"]
+	var h := m.c(j)
+	var n: int = h["ogg"].size()
+	if m.vita(j) - int(h["danni"]) - n > 3:
+		return "basta"
+	for o in ["cavalli", "cani", "proiettili", "ghirlanda", "aglio", "paletto", "ostia", "crocifisso", "cerchio", "fucile", "pistola", "coltello"]:
+		if _ha(opz, "scarta:" + o):
+			return "scarta:" + o
+	return "basta"
+
+func _cerchio(r: Dictionary, opz: Array) -> String:
+	var j: int = r["h"]
+	if _ha(opz, "h:%d" % j):
+		return "h:%d" % j
+	return "fine" if _ha(opz, "fine") else str(opz[0]["id"])
+
+func _macch_usa(_r: Dictionary, _opz: Array) -> String:
+	return "si"
+
+func _furioso_usa(_r: Dictionary, _opz: Array) -> String:
+	return "si"
+
+func _lucy_usa(_r: Dictionary, _opz: Array) -> String:
+	return "si"
+
+func _proiettili_usa(_r: Dictionary, _opz: Array) -> String:
+	return "si"
+
+func _salva(_r: Dictionary, opz: Array) -> String:
+	for o in opz:
+		if str(o["id"]) != "no":
+			return str(o["id"])
+	return "no"
+
+func _strumento(_r: Dictionary, _opz: Array) -> String:
+	return "si"
+
+func _cani_imboscata(_r: Dictionary, _opz: Array) -> String:
+	return "si"
+
+func _ordine_ricerca(_r: Dictionary, opz: Array) -> String:
+	# prima gli incontri che si possono togliere di mezzo senza combattere
+	for o in opz:
+		if not Dati.INCONTRI[o["carta"]].get("vampiro", false):
+			return str(o["id"])
+	return str(opz[0]["id"])
+
+func _ospedale(_r: Dictionary, opz: Array) -> String:
+	var dr := m.pos_dracula()
+	return _migliore(opz, func(o): return float(Dati.dist_viaggio(dr, o["id"])))
+
+func _matura_si(_r: Dictionary, _opz: Array) -> String:
+	return "si"
+
+func _scoperta_ogg(r: Dictionary, opz: Array) -> String:
+	return _limite_ogg(r, opz)
+
+func _scoperta_ev(r: Dictionary, opz: Array) -> String:
+	return _limite_ev(r, opz)
+
+func _rimuovi_blocco(_r: Dictionary, opz: Array) -> String:
+	# toglie il blocco più lontano dai cacciatori (quello che serve meno)
+	return _migliore(opz, func(o): return min(_dist_cacciatori(o["a"]), _dist_cacciatori(o["b"])))
+
+func _rimuovi_tempesta(_r: Dictionary, opz: Array) -> String:
+	return _migliore(opz, func(o): return _dist_cacciatori(o["luogo"]))

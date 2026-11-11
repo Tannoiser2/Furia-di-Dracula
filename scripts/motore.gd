@@ -23,7 +23,7 @@ func nuova(cfg: Dictionary) -> void:
 	s = {"seed": int(cfg.get("seed", 1)), "passo": 0, "pila": [], "coda": [], "log": [], "esito": {},
 		"seat": cfg.get("seat", [-1, -1, -1, -1, 0]), "facile": bool(cfg.get("facile", false)),
 		"giorno": 0, "notte": false, "fase": "inizio", "primo": true,
-		"influenza": 0, "disperazione": 0, "dicerie": 1, "dicerie_pool": 9,
+		"influenza": 0, "disperazione": 0, "dicerie": 1, "dicerie_pool": 3,
 		"dr": {"danni": 0, "inc": [], "ev": [], "alleato": "", "guardie": 0, "visto": ""},
 		"cacc": [], "alleato_c": "", "percorso": [], "tane": [],
 		"m_ogg": [], "s_ogg": [], "m_ev": [], "s_ev": [], "m_inc": [], "s_inc": [], "comb_d": [],
@@ -344,15 +344,12 @@ func _p_alba(_p: Dictionary) -> void:
 		if s["dicerie_pool"] > 0:
 			s["dicerie_pool"] -= 1
 			s["dicerie"] += 1
-	# la Schiera Celeste svanisce all'alba successiva
-	if not s["schiera"].is_empty() and s["flag"].get("schiera_nuova", false) == false:
-		s["schiera"] = []
-	s["flag"].erase("schiera_nuova")
 	# i cacciatori sconfitti vanno all'ospedale più vicino
+	var passi := []
 	for i in 4:
 		if c(i)["sconfitto"]:
-			_in_ospedale(i)
-	var passi := [{"f": "eventi_alba", "tramonto": false}, {"f": "combattimento_dracula"}]
+			passi.append({"f": "ospedale", "h": i})
+	passi.append_array([{"f": "eventi_alba", "tramonto": false}, {"f": "combattimento_dracula"}])
 	if s["flag"].get("no_giorno", false):
 		s["flag"].erase("no_giorno")
 		_log("L'Oscurità Ritorna: non c'è giorno per i cacciatori.")
@@ -361,19 +358,39 @@ func _p_alba(_p: Dictionary) -> void:
 	passi.append({"f": "tramonto"})
 	_push(passi)
 
-func _in_ospedale(i: int) -> void:
+## Il cacciatore sconfitto va all'ospedale più vicino (a parità di distanza sceglie Dracula).
+func _p_ospedale(p: Dictionary) -> void:
+	var i: int = p["h"]
+	if not c(i)["sconfitto"]:
+		return
 	var da: String = c(i).get("sconfitto_in", "madrid")
-	var best := "madrid"
-	var bd := 999
+	var dist := {}
 	for o in ["madrid", "roma", "budapest"]:
 		var d := Dati.dist_viaggio(da, o) if Dati.mare(da) else Dati.dist(da, o)
 		if not Dati.mare(da) and Dati.regione(da) == 1:
 			d = 0 if o == "madrid" else 99
 		if da == "cagliari":
 			d = 0 if o == "roma" else 99
-		if d < bd:
-			bd = d
-			best = o
+		dist[o] = d
+	var bd := 999
+	for o in dist:
+		bd = min(bd, int(dist[o]))
+	var pari := []
+	for o in dist:
+		if int(dist[o]) == bd:
+			pari.append(o)
+	if pari.size() == 1:
+		_in_ospedale(i, pari[0])
+		return
+	var opz := []
+	for o in pari:
+		opz.append(_o(o, "Ospedale di " + Dati.nome(o), {"luogo": o}))
+	_chiedi(DRACULA, "ospedale", "%s è stato sconfitto: gli ospedali più vicini sono alla stessa distanza. Dove si risveglia?" % nome(i), opz, {"h": i})
+
+func _d_ospedale(r: Dictionary, o: Dictionary) -> void:
+	_in_ospedale(int(r["h"]), o["id"])
+
+func _in_ospedale(i: int, best: String) -> void:
 	var h := c(i)
 	h["sconfitto"] = false
 	h["osp"] = best
@@ -398,19 +415,60 @@ func _p_tramonto(_p: Dictionary) -> void:
 		{"f": "fase_azioni", "notte": true}, {"f": "turno_dracula"}, {"f": "alba"}])
 
 func _p_fine_tramonto(_p: Dictionary) -> void:
-	# alla fine del tramonto Dracula toglie 1 Nebbia, 1 Strada Bloccata e 1 Tempesta
-	if not s["nebbia"].is_empty():
-		var k: String = s["nebbia"].keys()[0]
-		s["nebbia"][k] -= 1
-		if s["nebbia"][k] <= 0:
+	# alla fine del tramonto: 1 segnalino Nebbia in meno da ogni città, via la Schiera Celeste,
+	# e Dracula toglie 1 Strada Bloccata e 1 Tempesta a sua scelta
+	for k in s["nebbia"].keys():
+		s["nebbia"][k] = int(s["nebbia"][k]) - 1
+		if int(s["nebbia"][k]) <= 0:
 			s["nebbia"].erase(k)
-		_log("Si dirada un banco di nebbia a %s." % Dati.nome(k))
-	if not s["blocchi"].is_empty():
-		var b = s["blocchi"].pop_front()
-		_log("Riaperta la %s %s–%s." % ["ferrovia" if b[2] else "strada", Dati.nome(b[0]), Dati.nome(b[1])])
-	if not s["tempeste"].is_empty():
-		var t = s["tempeste"].pop_front()
-		_log("La tempesta si placa sul %s." % Dati.nome(t))
+			_log("La nebbia si dirada a %s." % Dati.nome(k))
+	if not s["schiera"].is_empty():
+		s["schiera"] = []
+		_log("La Schiera Celeste si ritira.")
+	if s["blocchi"].size() == 1:
+		_togli_blocco(0)
+	elif s["blocchi"].size() > 1:
+		var opz := []
+		for k in s["blocchi"].size():
+			var b: Array = s["blocchi"][k]
+			opz.append(_o(k, "%s %s–%s" % ["Ferrovia" if b[2] else "Strada", Dati.nome(b[0]), Dati.nome(b[1])], {"a": b[0], "b": b[1]}))
+		_chiedi(DRACULA, "rimuovi_blocco", "Fine del tramonto: quale Strada Bloccata togli?", opz)
+	if s["tempeste"].size() == 1:
+		_togli_tempesta(0)
+	elif s["tempeste"].size() > 1:
+		var opz := []
+		for k in s["tempeste"].size():
+			opz.append(_o(k, Dati.nome(s["tempeste"][k]), {"luogo": s["tempeste"][k]}))
+		_chiedi(DRACULA, "rimuovi_tempesta", "Fine del tramonto: quale Tempesta togli?", opz)
+
+func _togli_blocco(k: int) -> void:
+	var b = s["blocchi"][k]
+	s["blocchi"].remove_at(k)
+	_log("Riaperta la %s %s–%s." % ["ferrovia" if b[2] else "strada", Dati.nome(b[0]), Dati.nome(b[1])])
+
+func _togli_tempesta(k: int) -> void:
+	var t = s["tempeste"][k]
+	s["tempeste"].remove_at(k)
+	_log("La tempesta si placa sul %s." % Dati.nome(t))
+
+func _d_rimuovi_blocco(_r: Dictionary, o: Dictionary) -> void:
+	_togli_blocco(int(o["id"]))
+
+func _d_rimuovi_tempesta(_r: Dictionary, o: Dictionary) -> void:
+	_togli_tempesta(int(o["id"]))
+
+func _nebbia_libera() -> int:
+	var n := 0
+	for k in s["nebbia"]:
+		n += int(s["nebbia"][k])
+	return max(0, 4 - n)
+
+func _metti_nebbia(luogo: String, n: int) -> void:
+	n = min(n, _nebbia_libera())
+	if n <= 0:
+		_log("Non ci sono più segnalini Nebbia.")
+		return
+	s["nebbia"][luogo] = int(s["nebbia"].get(luogo, 0)) + n
 
 ## Eventi giocabili all'alba (o al tramonto) dai cacciatori.
 func _p_eventi_alba(p: Dictionary) -> void:
@@ -517,7 +575,11 @@ func _p_scegli_ordine(p: Dictionary) -> void:
 	if opz.is_empty():
 		return
 	var chi := int(opz[0]["id"])
-	_chiedi(chi, "ordine", "Telegrammi Veloci: chi agisce adesso?", opz, {"p": p})
+	for o in opz:
+		if int(s["seat"][int(o["id"])]) >= 0:
+			chi = int(o["id"])
+			break
+	_chiedi(chi, "ordine", "Telegrammi Veloci: la squadra decide chi agisce adesso.", opz, {"p": p})
 
 func _d_ordine(r: Dictionary, o: Dictionary) -> void:
 	var p: Dictionary = r["p"].duplicate(true)
@@ -531,6 +593,10 @@ func _p_azione(p: Dictionary) -> void:
 	if h["sconfitto"]:
 		return
 	s["fase"] = "notte" if p["notte"] else "giorno"
+	if _serve_scoperta(i) != "":
+		s["pila"].push_front(p)
+		_chiedi_scoperta(i)
+		return
 	if h["trattenuto"]:
 		h["trattenuto"] = false
 		_log("%s si rimette in piedi (era trattenuto)." % nome(i))
@@ -555,6 +621,39 @@ func _p_azione(p: Dictionary) -> void:
 		_chiedi(i, "azione", "%s è in mare: deve proseguire la navigazione." % nome(i), opz, {"notte": false, "giro": p.get("giro", 0)})
 		return
 	_chiedi(i, "azione", "%s — %s: scegli l'azione." % [nome(i), "notte" if p["notte"] else "giorno"], _opz_azione(i, p["notte"], p.get("giro", 0)), {"notte": p["notte"], "giro": p.get("giro", 0)})
+
+## Un cacciatore indebolito deve tenere scoperte una carta Oggetto e una carta Evento (se le ha).
+func _serve_scoperta(i: int) -> String:
+	var h := c(i)
+	if h["sconfitto"] or not indebolito(i):
+		return ""
+	if not h["ogg"].is_empty() and not (str(h.get("sc_ogg", "")) in h["ogg"]):
+		return "ogg"
+	if not h["ev"].is_empty() and not (str(h.get("sc_ev", "")) in h["ev"]):
+		return "ev"
+	return ""
+
+func _chiedi_scoperta(i: int) -> void:
+	var t := _serve_scoperta(i)
+	var opz := []
+	if t == "ogg":
+		for o in c(i)["ogg"]:
+			if not opz.any(func(x): return x["id"] == o):
+				opz.append(_o(o, Dati.OGGETTI[o]["nome"], {"carta": o}))
+		_chiedi(i, "scoperta_ogg", "%s è indebolito: quale carta Oggetto tiene scoperta (la vede anche Dracula)?" % nome(i), opz, {"h": i})
+	elif t == "ev":
+		for e in c(i)["ev"]:
+			if not opz.any(func(x): return x["id"] == e):
+				opz.append(_o(e, Dati.EVENTI[e]["nome"], {"carta": e}))
+		_chiedi(i, "scoperta_ev", "%s è indebolito: quale carta Evento tiene scoperta (la vede anche Dracula)?" % nome(i), opz, {"h": i})
+
+func _d_scoperta_ogg(r: Dictionary, o: Dictionary) -> void:
+	c(int(r["h"]))["sc_ogg"] = o["id"]
+	_log("%s tiene scoperta la carta %s." % [nome(int(r["h"])), Dati.OGGETTI[o["id"]]["nome"]])
+
+func _d_scoperta_ev(r: Dictionary, o: Dictionary) -> void:
+	c(int(r["h"]))["sc_ev"] = o["id"]
+	_log("%s tiene scoperta la carta %s." % [nome(int(r["h"])), Dati.EVENTI[o["id"]]["nome"]])
 
 func _d_pipistrelli(r: Dictionary, o: Dictionary) -> void:
 	var i: int = r["h"]
@@ -992,11 +1091,20 @@ func _d_imboscata(r: Dictionary, o: Dictionary) -> void:
 			[_o("si", "Sì, gioca Avvertito in Tempo"), _o("no", "No")], {"h": i, "rif": {"dove": parti[0], "k": int(parti[1])}, "e": k})
 		return
 	if e["id"] in ["ratti", "sabotatore", "spia", "lupi"] and ha_ogg(i, "cani"):
-		_scarta_ogg(i, "cani")
-		_log("I Cani di %s mettono in fuga «%s»: entrambe le carte sono scartate." % [nome(i), Dati.INCONTRI[e["id"]]["nome"]])
-		_rimuovi_inc({"dove": parti[0], "k": int(parti[1])}, k)
+		_chiedi(i, "cani_imboscata", "Imboscata con «%s»: scarti i Cani per scartare anche l'incontro?" % Dati.INCONTRI[e["id"]]["nome"],
+			[_o("si", "Sì, scarta i Cani e l'incontro"), _o("no", "No")], {"h": i, "rif": {"dove": parti[0], "k": int(parti[1])}, "e": k})
 		return
 	_risolvi_incontro(i, {"dove": parti[0], "k": int(parti[1])}, k, true)
+
+func _d_cani_imboscata(r: Dictionary, o: Dictionary) -> void:
+	var i: int = r["h"]
+	if o["id"] == "si":
+		var e: Dictionary = _h(r["rif"])["inc"][r["e"]]
+		_scarta_ogg(i, "cani")
+		_log("I Cani di %s mettono in fuga «%s»: entrambe le carte sono scartate." % [nome(i), Dati.INCONTRI[e["id"]]["nome"]])
+		_rimuovi_inc(r["rif"], r["e"])
+		return
+	_risolvi_incontro(i, r["rif"], r["e"], true)
 
 func _d_avvertito(r: Dictionary, o: Dictionary) -> void:
 	var i: int = r["h"]
@@ -1042,18 +1150,60 @@ func _ricerca(i: int) -> void:
 	for x in lista:
 		_h(x)["inc"][x["e"]]["riv"] = true
 	_log("%s cerca a %s e scopre: %s." % [nome(i), Dati.nome(pos), ", ".join(lista.map(func(x): return Dati.INCONTRI[_h(x)["inc"][x["e"]]["id"]]["nome"]))])
-	# Cani e Paletto di Frassino prima di risolvere
-	for x in lista.duplicate():
-		var id: String = _h(x)["inc"][x["e"]]["id"]
+	for x in lista:
+		var e: Dictionary = _h(x)["inc"][x["e"]]
+		if str(e.get("uid", "")) == "":
+			e["uid"] = "r%d_%d" % [s["passo"], x["e"]]
+	_push([{"f": "strumenti_ricerca", "h": i, "luogo": pos, "chiesti": []}, {"f": "dopo_strumenti", "h": i, "luogo": pos}])
+
+## Prima di risolvere la ricerca il cacciatore può rivelare Cani o Paletto di Frassino.
+func _p_strumenti_ricerca(p: Dictionary) -> void:
+	var i: int = p["h"]
+	if not in_citta(i, p["luogo"]):
+		return
+	var rif := nasc_di(p["luogo"])
+	for x in _lista_inc(rif):
+		var e: Dictionary = _h(x)["inc"][x["e"]]
+		var id: String = e["id"]
+		var uid := str(e.get("uid", ""))
+		if uid in p["chiesti"]:
+			continue
+		var strumento := ""
 		if id in ["ratti", "sabotatore", "spia", "lupi"] and ha_ogg(i, "cani"):
-			_log("I Cani di %s scacciano «%s»." % [nome(i), Dati.INCONTRI[id]["nome"]])
-			_h(x)["inc"][x["e"]]["via"] = true
+			strumento = "cani"
 		elif (Dati.INCONTRI[id].get("vampiro", false) or id == "raggiro") and ha_ogg(i, "paletto"):
-			_scarta_ogg(i, "paletto")
-			_log("%s pianta il Paletto di Frassino: «%s» è distrutto." % [nome(i), Dati.INCONTRI[id]["nome"]])
-			_h(x)["inc"][x["e"]]["via"] = true
-	_pulisci_via(rif)
-	rif = nasc_di(pos)
+			strumento = "paletto"
+		if strumento == "":
+			continue
+		p["chiesti"].append(uid)
+		s["pila"].push_front(p)
+		var t := "Rivela i Cani: «%s» è scartato (i Cani restano)" % Dati.INCONTRI[id]["nome"] if strumento == "cani" else "Pianta il Paletto di Frassino: scarti il Paletto e «%s»" % Dati.INCONTRI[id]["nome"]
+		_chiedi(i, "strumento", "Prima di risolvere la ricerca: usi %s contro «%s»?" % [Dati.OGGETTI[strumento]["nome"], Dati.INCONTRI[id]["nome"]], [_o("si", t), _o("no", "No")], {"h": i, "uid": uid, "strumento": strumento})
+		return
+
+func _d_strumento(r: Dictionary, o: Dictionary) -> void:
+	if o["id"] != "si":
+		return
+	var i: int = r["h"]
+	for h in s["percorso"] + s["tane"]:
+		for e in h["inc"]:
+			if str(e.get("uid", "")) == r["uid"]:
+				e["via"] = true
+				if r["strumento"] == "paletto":
+					_scarta_ogg(i, "paletto")
+					_log("%s pianta il Paletto di Frassino: «%s» è distrutto." % [nome(i), Dati.INCONTRI[e["id"]]["nome"]])
+				else:
+					_log("I Cani di %s scacciano «%s»." % [nome(i), Dati.INCONTRI[e["id"]]["nome"]])
+	var rif := nasc_di(c(i)["pos"])
+	if not rif.is_empty():
+		_pulisci_via(rif)
+
+func _p_dopo_strumenti(p: Dictionary) -> void:
+	var i: int = p["h"]
+	var pos: String = p["luogo"]
+	if not in_citta(i, pos):
+		return
+	var rif := nasc_di(pos)
 	if rif.is_empty():
 		return
 	var vampiro := false
@@ -1126,19 +1276,49 @@ func _p_risolvi_ricerca(p: Dictionary) -> void:
 		return
 	var rif := nasc_di(p["luogo"])
 	var fatti: Array = p.get("fatti", [])
+	var restano := []
 	for x in _lista_inc(rif):
 		var e: Dictionary = _h(x)["inc"][x["e"]]
-		var chiave := str(e.get("uid", ""))
-		if chiave == "":
-			e["uid"] = "%d_%d" % [s["passo"], rng.randi() % 100000]
-			chiave = e["uid"]
-		if chiave in fatti:
+		if str(e.get("uid", "")) == "":
+			e["uid"] = "%d_%d" % [s["passo"], x["e"]]
+		if str(e["uid"]) in fatti:
 			continue
-		fatti.append(chiave)
-		p["fatti"] = fatti
-		s["pila"].push_front(p)
-		_risolvi_incontro(i, {"dove": x["dove"], "k": x["k"]}, x["e"], false)
+		restano.append(x)
+	if restano.is_empty():
 		return
+	var tipi := {}
+	for x in restano:
+		tipi[_h(x)["inc"][x["e"]]["id"]] = true
+	if tipi.size() > 1:
+		var opz := []
+		for x in restano:
+			var e: Dictionary = _h(x)["inc"][x["e"]]
+			if not opz.any(func(y): return y["carta"] == e["id"]):
+				opz.append(_o(e["uid"], "Risolvi prima " + Dati.INCONTRI[e["id"]]["nome"], {"carta": e["id"]}))
+		s["pila"].push_front(p)
+		_chiedi(i, "ordine_ricerca", "%s: in che ordine risolvi gli incontri trovati?" % nome(i), opz, {"h": i})
+		return
+	var x0: Dictionary = restano[0]
+	_risolvi_uid(p, str(_h(x0)["inc"][x0["e"]]["uid"]))
+
+func _d_ordine_ricerca(r: Dictionary, o: Dictionary) -> void:
+	# la ricerca in pila è in cima: risolvi l'incontro scelto
+	var p: Dictionary = s["pila"].pop_front()
+	_risolvi_uid(p, o["id"])
+
+func _risolvi_uid(p: Dictionary, uid: String) -> void:
+	var i: int = p["h"]
+	var rif := nasc_di(p["luogo"])
+	var fatti: Array = p.get("fatti", [])
+	for x in _lista_inc(rif):
+		var e: Dictionary = _h(x)["inc"][x["e"]]
+		if str(e.get("uid", "")) == uid:
+			fatti.append(uid)
+			p["fatti"] = fatti
+			s["pila"].push_front(p)
+			_risolvi_incontro(i, {"dove": x["dove"], "k": x["k"]}, x["e"], false)
+			return
+	s["pila"].push_front(p)
 
 ## Risolve l'effetto di un incontro contro il cacciatore i. imboscata = true se l'ha giocato Dracula.
 func _risolvi_incontro(i: int, rif: Dictionary, k: int, imboscata: bool) -> void:
@@ -1184,7 +1364,7 @@ func _risolvi_incontro(i: int, rif: Dictionary, k: int, imboscata: bool) -> void
 				resta = true
 		"nebbia":
 			var n := 2 if Dati.porto(luogo) else 1
-			s["nebbia"][luogo] = int(s["nebbia"].get(luogo, 0)) + n
+			_metti_nebbia(luogo, n)
 			_log("Una Nebbia Innaturale avvolge %s." % Dati.nome(luogo))
 			if not notte():
 				for j in cacciatori_in(luogo):
@@ -1239,22 +1419,31 @@ func _spia(i: int) -> void:
 	c(i)["big"] = []
 
 func _szgany_in(luogo: String) -> void:
+	var passi := []
 	for j in cacciatori_in(luogo):
-		var n: int = c(j)["ogg"].size()
-		if n > 0:
-			# il cacciatore tiene armi e oggetti preziosi se ha vita da spendere
-			var tiene := []
-			var margine := vita(j) - int(c(j)["danni"]) - 3
-			for o in c(j)["ogg"].duplicate():
-				if margine > 0 and (Dati.OGGETTI[o].get("arma", false) or o in ["crocifisso", "cerchio", "ostia"]):
-					tiene.append(o)
-					margine -= 1
-				else:
-					_scarta_ogg(j, o)
-			if tiene.size() < n:
-				_log("%s getta %d oggetti alla Banda di Szgany." % [nome(j), n - tiene.size()])
-			if tiene.size() > 0:
-				_danno(j, tiene.size(), "Banda di Szgany")
+		if not c(j)["ogg"].is_empty():
+			passi.append({"f": "szgany", "h": j})
+	_push(passi)
+
+func _p_szgany(p: Dictionary) -> void:
+	var j: int = p["h"]
+	if not attivo(j) or c(j)["ogg"].is_empty():
+		return
+	var n: int = c(j)["ogg"].size()
+	var opz := [_o("basta", "Tieni le carte rimaste e subisci %d dann%s" % [n, "o" if n == 1 else "i"])]
+	for o in c(j)["ogg"]:
+		if not opz.any(func(x): return x["id"] == "scarta:" + o):
+			opz.append(_o("scarta:" + o, "Scarta " + Dati.OGGETTI[o]["nome"], {"carta": o}))
+	_chiedi(j, "szgany", "Banda di Szgany: %s può scartare carte Oggetto; poi subisce 1 danno per ogni Oggetto che tiene." % nome(j), opz, {"h": j})
+
+func _d_szgany(r: Dictionary, o: Dictionary) -> void:
+	var j: int = r["h"]
+	if o["id"] == "basta":
+		_danno(j, c(j)["ogg"].size(), "Banda di Szgany")
+		return
+	_scarta_ogg(j, o["id"].substr(7))
+	_log("%s getta %s alla Banda di Szgany." % [nome(j), Dati.OGGETTI[o["id"].substr(7)]["nome"]])
+	s["pila"].push_front({"f": "szgany", "h": j})
 
 func _lupi_in(luogo: String) -> void:
 	for j in cacciatori_in(luogo):
@@ -1291,11 +1480,14 @@ func _danno(i: int, n: int, fonte: String) -> void:
 	if n <= 0 or c(i)["sconfitto"]:
 		return
 	var h := c(i)
-	if int(h["danni"]) + n >= vita(i):
-		var salva := _salvataggio(i, "danno")
-		if salva != "":
-			_log("%s: %s evita il danno di %s." % [nome(i), salva, fonte])
-			return
+	if int(h["danni"]) + n >= vita(i) and _chiedi_salvataggio(i, {"tipo": "danno", "n": n, "fonte": fonte}):
+		return
+	_applica_danno(i, n, fonte)
+
+func _applica_danno(i: int, n: int, fonte: String) -> void:
+	var h := c(i)
+	if h["sconfitto"]:
+		return
 	h["danni"] = int(h["danni"]) + n
 	_log("%s subisce %d dann%s (%s). [%d/%d]" % [nome(i), n, "o" if n == 1 else "i", fonte, h["danni"], vita(i)])
 	if int(h["danni"]) >= vita(i):
@@ -1303,11 +1495,14 @@ func _danno(i: int, n: int, fonte: String) -> void:
 
 func _morso(i: int) -> void:
 	var h := c(i)
-	if int(h["morsi"]) + 1 > int(Dati.CACCIATORI[i]["morsi"]) or i == 3:
-		var salva := _salvataggio(i, "morso")
-		if salva != "":
-			_log("%s: %s evita il morso." % [nome(i), salva])
-			return
+	if (int(h["morsi"]) + 1 > int(Dati.CACCIATORI[i]["morsi"]) or i == 3) and _chiedi_salvataggio(i, {"tipo": "morso"}):
+		return
+	_applica_morso(i)
+
+func _applica_morso(i: int) -> void:
+	var h := c(i)
+	if h["sconfitto"]:
+		return
 	h["morsi"] = int(h["morsi"]) + 1
 	_log("%s è stato MORSO da Dracula!" % nome(i))
 	if int(h["morsi"]) > int(Dati.CACCIATORI[i]["morsi"]) or (i == 3 and int(h["morsi"]) >= 2):
@@ -1315,17 +1510,47 @@ func _morso(i: int) -> void:
 
 ## Grande Forza (qualsiasi cacciatore) o la Vendetta di Lucy (Godalming in combattimento) evitano la sconfitta.
 ## Le giocano in automatico: perdere un cacciatore è sempre peggio.
-func _salvataggio(i: int, _tipo: String) -> String:
+## Prima che un cacciatore sia sconfitto: chi ha Grande Forza (o Godalming con la Vendetta di Lucy in gioco) può impedirlo.
+func _chiedi_salvataggio(i: int, cosa: Dictionary) -> bool:
+	var chi := -1
+	var opz := []
 	if i == 0 and s["comb"].get("lucy", -1) == 0:
-		s["comb"]["lucy"] = -1
-		s["s_ev"].append({"id": "lucy", "coperta": false})
-		return "La Vendetta di Lucy"
+		chi = 0
+		opz.append(_o("lucy", "Usa la Vendetta di Lucy", {"carta": "lucy"}))
 	for j in 4:
-		if "grande_forza" in c(j)["ev"] and not c(j)["sconfitto"]:
-			_scarta_ev(j, "grande_forza")
-			_annuncia(j, "grande_forza")
-			return "Grande Forza"
-	return ""
+		if "grande_forza" in c(j)["ev"] and not c(j)["sconfitto"] and (chi < 0 or chi == j):
+			chi = j
+			opz.append(_o("forza", "Gioca Grande Forza", {"carta": "grande_forza"}))
+			break
+	if chi < 0:
+		return false
+	var t := "%s sta per essere sconfitto (%s)." % [nome(i), "morso" if cosa["tipo"] == "morso" else "%d danni da %s" % [cosa["n"], cosa["fonte"]]]
+	opz.append(_o("no", "Lascia che accada"))
+	var extra := cosa.duplicate()
+	extra["h"] = i
+	_chiedi(chi, "salva", t + " Lo impedisci?", opz, extra)
+	return true
+
+func _d_salva(r: Dictionary, o: Dictionary) -> void:
+	var i: int = r["h"]
+	match o["id"]:
+		"lucy":
+			if s["comb"].get("lucy", -1) == 0:
+				s["comb"]["lucy"] = -1
+				s["s_ev"].append({"id": "lucy", "coperta": false})
+				_log("La Vendetta di Lucy salva %s." % nome(i))
+				return
+		"forza":
+			for j in 4:
+				if "grande_forza" in c(j)["ev"]:
+					_scarta_ev(j, "grande_forza")
+					_annuncia(j, "grande_forza")
+					_log("Grande Forza: %s resiste." % nome(i))
+					return
+	if r["tipo"] == "morso":
+		_applica_morso(i)
+	else:
+		_applica_danno(i, int(r["n"]), str(r["fonte"]))
 
 func _sconfitto(i: int) -> void:
 	var h := c(i)
@@ -1342,16 +1567,28 @@ func _sconfitto(i: int) -> void:
 
 func _prenota(i: int) -> void:
 	var n := 2 if i == 0 else 1
-	for k in n:
-		if s["riserva_big"].is_empty():
-			break
-		var b: Array = s["riserva_big"].pop_front()
-		if c(i)["big"].size() >= 2:
-			c(i)["big"].append(b)
-			_chiedi(i, "scarta_big", "Puoi tenere solo 2 biglietti: quale scarti?", _opz_big(i), {"h": i})
-		else:
-			c(i)["big"].append(b)
 	_log("%s prenota %s." % [nome(i), "due biglietti" if n == 2 else "un biglietto"])
+	s["pila"].push_front({"f": "prenota", "h": i, "n": n})
+
+func _p_prenota(p: Dictionary) -> void:
+	var i: int = p["h"]
+	if int(p["n"]) <= 0 or s["riserva_big"].is_empty():
+		return
+	if c(i)["big"].size() >= 2:
+		s["pila"].push_front(p)
+		_chiedi(i, "scarta_big", "Puoi tenere solo 2 biglietti: prima di pescarne un altro, quale scarti?", _opz_big(i), {"h": i})
+		return
+	var b: Array = s["riserva_big"].pop_front()
+	c(i)["big"].append(b)
+	s["pila"].push_front({"f": "prenota", "h": i, "n": int(p["n"]) - 1})
+	_chiedi(i, "tieni_big", "%s pesca il biglietto %s. Lo tieni?" % [nome(i), _desc_big(b)], [_o("tieni", "Tienilo"), _o("scarta", "Scartalo")], {"h": i, "big": b})
+
+func _d_tieni_big(r: Dictionary, o: Dictionary) -> void:
+	if o["id"] == "scarta":
+		var i: int = r["h"]
+		var b: Array = c(i)["big"].pop_back()
+		s["riserva_big"].append(b)
+		_mescola(s["riserva_big"])
 
 func _opz_big(i: int) -> Array:
 	var out := []
@@ -1961,10 +2198,6 @@ func _p_comb_inizio(p: Dictionary) -> void:
 		_log("COMBATTIMENTO: %s contro il %s (%d/%d)." % [", ".join(cc.map(func(x): return nome(x))), Dati.INCONTRI[p["inc"]]["nome"], vita_v - int(s["comb"]["vamp_danni"]), vita_v])
 	else:
 		_log("COMBATTIMENTO con DRACULA a %s (%s)! %s." % [Dati.nome(p["luogo"]), "di notte" if nt else "di giorno", ", ".join(cc.map(func(x): return nome(x)))])
-	for j in cc:
-		if ha_ogg(j, "ghirlanda"):
-			s["comb"]["ghirlanda"].append(j)
-			_log("%s indossa la Ghirlanda d'Aglio." % nome(j))
 	var passi := []
 	for j in cc:
 		passi.append({"f": "comb_pre", "h": j})
@@ -1990,16 +2223,24 @@ func _p_comb_pre(p: Dictionary) -> void:
 		var d: Dictionary = Dati.EVENTI[e]
 		if d["quando"] == "combattimento" and (not d.has("solo") or int(d["solo"]) == j):
 			opz.append(_o(e, "Gioca " + d["nome"], {"carta": e}))
-	if opz.is_empty():
+	if ha_ogg(j, "ghirlanda") and not (j in s["comb"]["ghirlanda"]):
+		opz.append(_o("ghirlanda", "Rivela la Ghirlanda d'Aglio", {"carta": "ghirlanda"}))
+	if opz.is_empty() or s["comb"]["esito"] != "":
 		return
-	opz.append(_o("no", "Nessuna"))
-	_chiedi(j, "comb_pre", "Inizio del combattimento: %s gioca un evento?" % nome(j), opz, {"h": j})
+	opz.append(_o("no", "Nessuna (inizia il combattimento)"))
+	_chiedi(j, "comb_pre", "Inizio del combattimento: %s gioca un evento o rivela un oggetto?" % nome(j), opz, {"h": j})
 
 func _d_comb_pre(r: Dictionary, o: Dictionary) -> void:
 	if o["id"] == "no":
 		return
 	var j: int = r["h"]
 	var e: String = o["id"]
+	# si può giocare più di una carta: si richiede di nuovo
+	s["pila"].push_front({"f": "comb_pre", "h": j})
+	if e == "ghirlanda":
+		s["comb"]["ghirlanda"].append(j)
+		_log("%s indossa la Ghirlanda d'Aglio." % nome(j))
+		return
 	_scarta_ev(j, e)
 	_annuncia(j, e)
 	match e:
@@ -2148,9 +2389,95 @@ func _p_comb_risolvi(_p: Dictionary) -> void:
 			if x["id"] != cb["scelte"].get(str(ing), ""):
 				opz.append(_o(x["id"], "Cambia con " + x["testo"]))
 		_chiedi(ing, "pianificata", "Imboscata Pianificata: Dracula ha giocato %s. Cambi carta?" % Dati.COMB_DRACULA[dc]["nome"], opz, {"h": ing})
-		s["pila"].push_front({"f": "comb_effetti"})
+	cb["pre"] = {"fatti": [], "macch": false, "furioso": false, "lucy": false, "cerchio": {}, "proiettili": []}
+	_push([{"f": "comb_prima_effetti"}, {"f": "comb_effetti"}])
+
+## Le scelte che si fanno dopo aver visto le carte e prima di risolverle:
+## Cerchio Sacro, Macchinazione scoperta, Furioso, Vendetta di Lucy, Proiettili Consacrati.
+func _p_comb_prima_effetti(_p: Dictionary) -> void:
+	var cb: Dictionary = s["comb"]
+	if cb.is_empty():
 		return
-	_p_comb_effetti({})
+	var pre: Dictionary = cb["pre"]
+	var fatti: Array = pre["fatti"]
+	var dc: String = cb["carta_d"]
+	var ing: int = cb["ingaggiato"]
+	var sc_ing: String = cb["scelte"].get(str(ing), "")
+	var icona: String = Dati.COMB_DRACULA[dc]["icona"]
+	var cancella: bool = sc_ing != "" and icona in _icone_carta(sc_ing)
+	var fuga: bool = dc in ["pipistrello", "nebbia"]
+	# Cerchio Sacro: chi lo gioca sceglie chi esce dal combattimento
+	for j in cb["cacc"]:
+		if cb["scelte"].get(str(j), "") == "o:cerchio" and not ("cerchio%d" % j in fatti):
+			fatti.append("cerchio%d" % j)
+			pre["cerchio"][str(j)] = []
+			s["pila"].push_front({"f": "comb_prima_effetti"})
+			_chiedi_cerchio(j)
+			return
+	# Macchinazione scoperta
+	if not ("macch" in fatti) and sc_ing.begins_with("c:") and "macchinazione" in cb["scoperte"] and (cancella or sc_ing == "c:fuggire"):
+		fatti.append("macch")
+		s["pila"].push_front({"f": "comb_prima_effetti"})
+		_chiedi(DRACULA, "macch_usa", "%s ha giocato %s. Giri la Macchinazione per annullarla?" % [nome(ing), _nome_scelta(sc_ing)], [_o("si", "Sì, annullala"), _o("no", "No, tienila per dopo")])
+		return
+	# Furioso
+	if not ("furioso" in fatti) and cancella and not pre["macch"] and not fuga and cb["tipo"] == "dracula" and "furioso" in s["dr"]["ev"]:
+		fatti.append("furioso")
+		s["pila"].push_front({"f": "comb_prima_effetti"})
+		_chiedi(DRACULA, "furioso_usa", "%s sta per annullare la tua %s. Giochi Furioso?" % [_nome_scelta(sc_ing), Dati.COMB_DRACULA[dc]["nome"]], [_o("si", "Sì (ma niente fughe in questo combattimento)"), _o("no", "No")])
+		return
+	# La Vendetta di Lucy contro la fuga
+	if not ("lucy" in fatti) and fuga and int(cb["lucy"]) == 0 and cb["tipo"] == "dracula" and int(cb["giocate"]) > int(s["disperazione"]) and not cb["furioso"] and not cancella:
+		fatti.append("lucy")
+		s["pila"].push_front({"f": "comb_prima_effetti"})
+		_chiedi(0, "lucy_usa", "Dracula tenta la fuga. Usi la Vendetta di Lucy per impedirla?", [_o("si", "Sì, impedisci la fuga"), _o("no", "No, tienila")])
+		return
+	# Proiettili Consacrati
+	for j in cb["cacc"]:
+		var sc: String = cb["scelte"].get(str(j), "")
+		if sc in ["o:pistola", "o:fucile"] and ha_ogg(j, "proiettili") and not (j in cb["proiettili"]) and not ("pr%d" % j in fatti):
+			fatti.append("pr%d" % j)
+			s["pila"].push_front({"f": "comb_prima_effetti"})
+			_chiedi(j, "proiettili_usa", "%s spara con %s: usa i Proiettili Consacrati (+3 danni)?" % [nome(j), _nome_scelta(sc)], [_o("si", "Sì, usali"), _o("no", "No, tienili")], {"h": j})
+			return
+
+func _chiedi_cerchio(j: int) -> void:
+	var cb: Dictionary = s["comb"]
+	var scelti: Array = cb["pre"]["cerchio"][str(j)]
+	var opz := []
+	for x in cb["cacc"]:
+		if not (x in scelti):
+			opz.append(_o("h:%d" % x, "Fai uscire " + nome(x) + (" (tu)" if x == j else "")))
+	if not scelti.is_empty():
+		opz.append(_o("fine", "Basta così"))
+	if opz.is_empty():
+		return
+	_chiedi(j, "cerchio", "Cerchio Sacro: scegli uno o più cacciatori da far uscire dal combattimento.", opz, {"h": j})
+
+func _d_cerchio(r: Dictionary, o: Dictionary) -> void:
+	if o["id"] == "fine":
+		return
+	var j: int = r["h"]
+	s["comb"]["pre"]["cerchio"][str(j)].append(int(o["id"].substr(2)))
+	_chiedi_cerchio(j)
+
+func _d_macch_usa(_r: Dictionary, o: Dictionary) -> void:
+	s["comb"]["pre"]["macch"] = o["id"] == "si"
+
+func _d_furioso_usa(_r: Dictionary, o: Dictionary) -> void:
+	if o["id"] == "si":
+		_togli(s["dr"]["ev"], "furioso")
+		s["s_ev"].append({"id": "furioso", "coperta": false})
+		_annuncia(DRACULA, "furioso")
+		s["comb"]["furioso"] = true
+		s["comb"]["pre"]["furioso"] = true
+
+func _d_lucy_usa(_r: Dictionary, o: Dictionary) -> void:
+	s["comb"]["pre"]["lucy"] = o["id"] == "si"
+
+func _d_proiettili_usa(r: Dictionary, o: Dictionary) -> void:
+	if o["id"] == "si":
+		s["comb"]["pre"]["proiettili"].append(int(r["h"]))
 
 func _d_pianificata(r: Dictionary, o: Dictionary) -> void:
 	if o["id"] != "tieni":
@@ -2172,19 +2499,14 @@ func _p_comb_effetti(_p: Dictionary) -> void:
 	var icona: String = Dati.COMB_DRACULA[dc]["icona"]
 	var annullate := {}   # cacciatore -> true se la sua carta è annullata
 	var annullata_d := false
+	var pre: Dictionary = cb.get("pre", {})
 	# Macchinazione scoperta: Dracula annulla Pugno, Schivare o Fuggire del cacciatore ingaggiato
-	if sc_ing.begins_with("c:") and "macchinazione" in cb["scoperte"] and (icona in _icone_carta(sc_ing) or sc_ing == "c:fuggire"):
+	if pre.get("macch", false):
 		cb["scoperte"].erase("macchinazione")
 		annullate[ing] = true
 		_log("Macchinazione: Dracula aveva previsto la mossa di %s, che è annullata." % nome(ing))
 	elif sc_ing != "" and icona in _icone_carta(sc_ing):
-		annullata_d = true
-		if "furioso" in s["dr"]["ev"] and cb["tipo"] == "dracula" and not (dc in ["pipistrello", "nebbia"]):
-			_togli(s["dr"]["ev"], "furioso")
-			s["s_ev"].append({"id": "furioso", "coperta": false})
-			_annuncia(DRACULA, "furioso")
-			cb["furioso"] = true
-			annullata_d = false
+		annullata_d = not pre.get("furioso", false)
 	# Orgoglio: le fughe sono annullate se Dracula non ha giocato abbastanza carte
 	if dc in ["pipistrello", "nebbia"]:
 		if int(cb["giocate"]) <= int(s["disperazione"]):
@@ -2192,7 +2514,7 @@ func _p_comb_effetti(_p: Dictionary) -> void:
 			_log("Orgoglio: troppo presto per fuggire, la carta è annullata.")
 		elif cb["furioso"]:
 			annullata_d = true
-		elif cb["lucy"] >= 0 and cb["tipo"] == "dracula":
+		elif pre.get("lucy", false) and int(cb["lucy"]) >= 0:
 			_log("La Vendetta di Lucy impedisce la fuga di Dracula!")
 			s["s_ev"].append({"id": "lucy", "coperta": false})
 			cb["lucy"] = -1
@@ -2366,7 +2688,7 @@ func _effetto_cacciatore(j: int, sc: String, dc: String, ingaggiato: bool, _pr: 
 	match k:
 		"pistola", "fucile", "coltello":
 			var d := int(Dati.OGGETTI[k]["danni"]) - (1 if mesm else 0)
-			if k != "coltello" and ha_ogg(j, "proiettili") and not (j in cb["proiettili"]):
+			if k != "coltello" and ha_ogg(j, "proiettili") and not (j in cb["proiettili"]) and j in cb.get("pre", {}).get("proiettili", []):
 				cb["proiettili"].append(j)
 				_scarta_ogg(j, "proiettili")
 				d += 3
@@ -2384,8 +2706,12 @@ func _effetto_cacciatore(j: int, sc: String, dc: String, ingaggiato: bool, _pr: 
 				_danno_vampiro(4)
 		"cerchio":
 			_scarta_ogg(j, "cerchio")
-			cb["cacc"].erase(j)
-			_log("%s si rifugia nel Cerchio Sacro." % nome(j))
+			var fuori: Array = cb.get("pre", {}).get("cerchio", {}).get(str(j), [j])
+			if fuori.is_empty():
+				fuori = [j]
+			for x in fuori:
+				cb["cacc"].erase(x)
+				_log("%s si rifugia nel Cerchio Sacro ed esce dal combattimento." % nome(x))
 		"crocifisso":
 			pass
 
@@ -2566,7 +2892,7 @@ func _d_potere_diabolico(_r: Dictionary, o: Dictionary) -> void:
 		_log("Potere Diabolico: sconsacrato il terreno di %s." % Dati.nome(o["id"].get_slice(":", 1)))
 
 func _p_piazza_tempeste(p: Dictionary) -> void:
-	if int(p["n"]) <= 0:
+	if int(p["n"]) <= 0 or s["tempeste"].size() >= 6:
 		return
 	var opz := [_o("fine", "Basta così")]
 	for k in Dati.luoghi():
@@ -2582,7 +2908,7 @@ func _d_tempesta(r: Dictionary, o: Dictionary) -> void:
 	s["pila"].push_front({"f": "piazza_tempeste", "n": int(r["n"]) - 1})
 
 func _p_piazza_blocco(p: Dictionary) -> void:
-	if int(p["n"]) <= 0:
+	if int(p["n"]) <= 0 or s["blocchi"].size() >= 8:
 		return
 	var opz := [_o("fine", "Basta così")]
 	for st in Dati.mappa()["strade"]:
@@ -2806,76 +3132,104 @@ func _opz_incontri_mano() -> Array:
 	return out
 
 func _matura(h: Dictionary) -> void:
-	var vamp_extra := false
-	for e in h["inc"].duplicate():
-		e["riv"] = true
-		var id: String = e["id"]
-		var d: Dictionary = Dati.INCONTRI[id]
-		_log("Matura «%s»%s." % [d["nome"], " a " + Dati.nome(h["luogo"]) if h["luogo"] != "" else ""])
-		match id:
-			"temerario", "aristocratico", "nuovo":
-				var n := 3 if id == "nuovo" else 4
-				if h["diceria"]:
-					n += 3
-					h["diceria"] = false
-					s["dicerie_pool"] = int(s["dicerie_pool"])
-				s["influenza"] = int(s["influenza"]) + n
-				_log("Il vampiro si è insediato: l'Influenza di Dracula sale di %d." % n)
-				vamp_extra = true
-			"szgany":
-				if h["luogo"] != "" and not Dati.mare(h["luogo"]):
-					h["riv"] = true
-					for k in Dati.citta():
-						if Dati.regione(k) == Dati.regione(h["luogo"]):
-							_szgany_in(k)
-			"raggiro":
+	s["flag"]["maturando"] = {"h": h, "i": 0, "vamp": false}
+	s["pila"].push_front({"f": "maturazione"})
+
+func _p_maturazione(_p: Dictionary) -> void:
+	var mt: Dictionary = s["flag"].get("maturando", {})
+	if mt.is_empty():
+		return
+	var h: Dictionary = mt["h"]
+	if int(mt["i"]) >= h["inc"].size():
+		s["flag"].erase("maturando")
+		var tenute := []
+		for e in h["inc"]:
+			if e.get("tenuta", false):
+				tenute.append(e)
+		for e in tenute:
+			h["inc"].erase(e)
+		_sgombera(h)
+		if mt["vamp"]:
+			# sgombera anche i nascondigli sul 4°, 5° e 6° spazio (quello uscito è il 7°)
+			for k in range(s["percorso"].size() - 1, 2, -1):
+				if k == indice_attuale():
+					continue
+				_sgombera(s["percorso"][k])
+				s["percorso"].remove_at(k)
+			_log("Il Percorso si accorcia: sgomberati i nascondigli più vecchi.")
+		return
+	var e: Dictionary = h["inc"][int(mt["i"])]
+	mt["i"] = int(mt["i"]) + 1
+	e["riv"] = true
+	var d: Dictionary = Dati.INCONTRI[e["id"]]
+	_log("Matura «%s»%s." % [d["nome"], " a " + Dati.nome(h["luogo"]) if h["luogo"] != "" else ""])
+	s["pila"].push_front({"f": "maturazione"})
+	if not d.has("consolidato"):
+		return
+	_chiedi(DRACULA, "matura_si", "«%s» matura: %s Risolvi l'effetto?" % [d["nome"], d["consolidato"]], [_o("si", "Sì, risolvilo"), _o("no", "No")], {"e": e["id"]})
+
+func _d_matura_si(r: Dictionary, o: Dictionary) -> void:
+	var mt: Dictionary = s["flag"].get("maturando", {})
+	if o["id"] != "si" or mt.is_empty():
+		return
+	var h: Dictionary = mt["h"]
+	var id: String = r["e"]
+	match id:
+		"temerario", "aristocratico", "nuovo":
+			var n := 3 if id == "nuovo" else 4
+			if h["diceria"]:
+				n += 3
+				h["diceria"] = false
+				s["dicerie_pool"] = int(s["dicerie_pool"]) + 1
+			s["influenza"] = int(s["influenza"]) + n
+			_log("Il vampiro si è insediato: l'Influenza di Dracula sale di %d." % n)
+			mt["vamp"] = true
+		"szgany":
+			if h["luogo"] != "" and not Dati.mare(h["luogo"]):
+				h["riv"] = true
+				for k in Dati.citta():
+					if Dati.regione(k) == Dati.regione(h["luogo"]):
+						_szgany_in(k)
+		"raggiro":
+			var opz := []
+			for x in s["s_ev"]:
+				if Dati.EVENTI[x["id"]]["d"] and not opz.any(func(y): return y["id"] == x["id"]):
+					opz.append(_o(x["id"], Dati.EVENTI[x["id"]]["nome"], {"carta": x["id"]}))
+			if not opz.is_empty():
+				_chiedi(DRACULA, "raggiro", "Raggiro: quale Evento di Dracula riprendi dagli scarti?", opz)
+		"lupi":
+			if h["luogo"] != "" and not Dati.mare(h["luogo"]):
+				h["riv"] = true
 				var opz := []
-				for x in s["s_ev"]:
-					if Dati.EVENTI[x["id"]]["d"] and not opz.any(func(y): return y["id"] == x["id"]):
-						opz.append(_o(x["id"], Dati.EVENTI[x["id"]]["nome"], {"carta": x["id"]}))
-				if not opz.is_empty():
-					_chiedi(DRACULA, "raggiro", "Raggiro: quale Evento di Dracula riprendi dagli scarti?", opz)
-			"lupi":
-				if h["luogo"] != "" and not Dati.mare(h["luogo"]):
-					h["riv"] = true
-					var opz := []
-					for k in Dati.distanze_strada(h["luogo"], 2):
+				for k in Dati.distanze_strada(h["luogo"], 2):
+					opz.append(_o(k, Dati.nome(k), {"luogo": k}))
+				_chiedi(DRACULA, "lupi_maturi", "I Lupi maturano: in quale città (fino a 2 strade) colpiscono?", opz)
+		"guardie":
+			s["dr"]["guardie"] = int(s["dr"]["guardie"]) + 1
+			for e in h["inc"]:
+				if e["id"] == "guardie" and not e.get("tenuta", false):
+					e["tenuta"] = true
+					break
+			_log("Dracula tiene le Guardie del Corpo Szgany pronte per il prossimo combattimento.")
+		"sconsacrato":
+			s["dr"]["danni"] = max(0, int(s["dr"]["danni"]) - 3)
+			_log("Dracula recupera fino a 3 danni.")
+		"nebbia":
+			if h["luogo"] != "" and not Dati.mare(h["luogo"]):
+				h["riv"] = true
+				var opz := []
+				for k in Dati.citta():
+					if Dati.regione(k) == Dati.regione(h["luogo"]):
 						opz.append(_o(k, Dati.nome(k), {"luogo": k}))
-					_chiedi(DRACULA, "lupi_maturi", "I Lupi maturano: in quale città (fino a 2 strade) colpiscono?", opz)
-			"guardie":
-				s["dr"]["guardie"] = int(s["dr"]["guardie"]) + 1
-				h["inc"].erase(e)
-				_log("Dracula tiene le Guardie del Corpo Szgany pronte per il prossimo combattimento.")
-				continue
-			"sconsacrato":
-				s["dr"]["danni"] = max(0, int(s["dr"]["danni"]) - 3)
-				_log("Dracula recupera fino a 3 danni.")
-			"nebbia":
-				if h["luogo"] != "" and not Dati.mare(h["luogo"]):
-					h["riv"] = true
-					var opz := []
-					for k in Dati.citta():
-						if Dati.regione(k) == Dati.regione(h["luogo"]):
-							opz.append(_o(k, Dati.nome(k), {"luogo": k}))
-					_chiedi(DRACULA, "nebbia_matura", "Nebbia Innaturale: su quale città della regione?", opz)
-			"sabotatore":
-				s["pila"].push_front({"f": "piazza_blocco", "n": 1})
-			"spia":
-				var opz := []
-				for j in 4:
-					if attivo(j):
-						opz.append(_o(j, nome(j)))
-				_chiedi(DRACULA, "spia_matura", "La Spia: contro quale cacciatore?", opz)
-	_sgombera(h)
-	if vamp_extra:
-		# sgombera anche i nascondigli sul 4°, 5° e 6° spazio (quello uscito è il 7°)
-		for k in range(s["percorso"].size() - 1, 2, -1):
-			var x: Dictionary = s["percorso"][k]
-			if k == indice_attuale():
-				continue
-			_sgombera(x)
-			s["percorso"].remove_at(k)
-		_log("Il Percorso si accorcia: sgomberati i nascondigli più vecchi.")
+				_chiedi(DRACULA, "nebbia_matura", "Nebbia Innaturale: su quale città della regione?", opz)
+		"sabotatore":
+			s["pila"].push_front({"f": "piazza_blocco", "n": 1})
+		"spia":
+			var opz := []
+			for j in 4:
+				if attivo(j):
+					opz.append(_o(j, nome(j)))
+			_chiedi(DRACULA, "spia_matura", "La Spia: contro quale cacciatore?", opz)
 
 func _d_raggiro(_r: Dictionary, o: Dictionary) -> void:
 	for k in s["s_ev"].size():
@@ -2899,7 +3253,7 @@ func _d_lupi_maturi(_r: Dictionary, o: Dictionary) -> void:
 	_lupi_in(o["id"])
 
 func _d_nebbia_matura(_r: Dictionary, o: Dictionary) -> void:
-	s["nebbia"][o["id"]] = int(s["nebbia"].get(o["id"], 0)) + 2
+	_metti_nebbia(o["id"], 2)
 	_log("Una fitta nebbia cala su %s." % Dati.nome(o["id"]))
 
 func _d_spia_matura(_r: Dictionary, o: Dictionary) -> void:

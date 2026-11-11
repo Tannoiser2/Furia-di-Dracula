@@ -1032,6 +1032,12 @@ func _aggiorna_cacciatori() -> void:
 		var info := "Vita %d/%d  Morsi %d/%d" % [vita, m.vita(i), int(h["morsi"]), int(Dati.CACCIATORI[i]["morsi"])]
 		v.add_child(etichetta(info, F_TESTO, 13, C_TESTO))
 		v.add_child(etichetta("Oggetti %d  Eventi %d  Biglietti %d" % [h["ogg"].size(), h["ev"].size(), h["big"].size()], F_TESTO, 13, C_SPENTO))
+		var scop := _scoperte(i)
+		if not scop.is_empty():
+			var ls := etichetta("Scoperte: " + ", ".join(scop), F_CORSIVO, 13, C_ORO)
+			ls.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			ls.custom_minimum_size = Vector2(170, 0)
+			v.add_child(ls)
 	# riquadro di Dracula
 	var pd := pannello(Color(0.25, 0.03, 0.03, 0.9), C_SANGUE_V)
 	pd.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -1059,6 +1065,18 @@ func _aggiorna_cacciatori() -> void:
 	vd.add_child(etichetta("Vita %d/15  Incontri %d  Eventi %d" % [Dati.VITA_DRACULA - int(m.s["dr"]["danni"]), m.s["dr"]["inc"].size(), m.s["dr"]["ev"].size()], F_TESTO, 13))
 	if int(m.s["dr"]["guardie"]) > 0:
 		vd.add_child(etichetta("Guardie Szgany pronte: %d" % m.s["dr"]["guardie"], F_TESTO, 13, C_SANGUE_V))
+
+## Le carte che un cacciatore indebolito tiene scoperte (le vede anche Dracula).
+func _scoperte(i: int) -> Array:
+	var h := m.c(i)
+	var out := []
+	if not m.indebolito(i):
+		return out
+	if str(h.get("sc_ogg", "")) in h["ogg"]:
+		out.append(Dati.OGGETTI[h["sc_ogg"]]["nome"])
+	if str(h.get("sc_ev", "")) in h["ev"]:
+		out.append(Dati.EVENTI[h["sc_ev"]]["nome"])
+	return out
 
 func _img_nascondiglio(h: Dictionary) -> Array:
 	# [immagine principale, didascalia]
@@ -1196,10 +1214,18 @@ func _aggiorna_mano() -> void:
 		if ev is InputEventMouseButton and ev.pressed:
 			_ingrandisci_scheda(pth))
 	mano_box.add_child(scheda)
+	var sc_o := str(h.get("sc_ogg", "")) if m.indebolito(i) else ""
+	var sc_e := str(h.get("sc_ev", "")) if m.indebolito(i) else ""
 	for o in h["ogg"]:
-		mano_box.add_child(carta(Dati.img("oggetto", o) if not segreto else "res://assets/carte/oggetti/dorso.webp", 70, Dati.OGGETTI[o]["nome"] if not segreto else ""))
+		var vis: bool = not segreto or o == sc_o
+		if o == sc_o:
+			sc_o = "#"
+		mano_box.add_child(carta(Dati.img("oggetto", o) if vis else "res://assets/carte/oggetti/dorso.webp", 70, (Dati.OGGETTI[o]["nome"] + (" (scoperta)" if segreto else "")) if vis else ""))
 	for e in h["ev"]:
-		mano_box.add_child(carta(Dati.img("evento", e) if not segreto else "res://assets/carte/eventi/dorso.webp", 70, Dati.EVENTI[e]["nome"] if not segreto else ""))
+		var vis: bool = not segreto or e == sc_e
+		if e == sc_e:
+			sc_e = "#"
+		mano_box.add_child(carta(Dati.img("evento", e) if vis else "res://assets/carte/eventi/dorso.webp", 70, (Dati.EVENTI[e]["nome"] + (" (scoperta)" if segreto else "")) if vis else ""))
 	for b in h["big"]:
 		var path := Dati.img_biglietto(b) if not segreto else "res://assets/segnalini/biglietto_dorso.webp"
 		var im := immagine(path, 60, 100)

@@ -226,7 +226,8 @@ const POTERI := {
 }
 
 ## Biglietti: [valore bianco, valore giallo] (0 = nessun numero giallo).
-const BIGLIETTI := [[1, 0], [1, 0], [1, 0], [1, 0], [1, 1], [1, 1], [1, 1], [2, 1], [2, 1], [2, 1], [2, 2], [2, 2], [2, 2], [3, 2], [3, 2], [3, 2]]
+## Distribuzione dei 16 biglietti presa dal sacchetto del modulo TTS.
+const BIGLIETTI := [[1, 0], [1, 0], [1, 0], [1, 1], [1, 1], [2, 1], [2, 1], [2, 1], [2, 2], [2, 2], [2, 2], [2, 2], [3, 2], [3, 2], [3, 2], [3, 2]]
 
 static func img_biglietto(b: Array) -> String:
 	if int(b[1]) == 0:
